@@ -651,7 +651,7 @@ public class Config {
 	    });
     }
 
-	private static String playername;
+	public static String playername;
 
 	public static void setPlayerName(String playername) {
 		Config.playername = playername;

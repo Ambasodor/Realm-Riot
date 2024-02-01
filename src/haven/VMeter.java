@@ -32,6 +32,10 @@ import java.util.*;
 public class VMeter extends LayerMeter {
     public static final Tex bg = Resource.loadtex("gfx/hud/vm-frame");
     public static final Tex fg = Resource.loadtex("gfx/hud/vm-tex");
+	public static final Color Fuel_Color = new Color(255, 128, 0);
+	public static final Color Water_Color = new Color(71, 101, 153);
+	public double amount;
+	public Color color;
 
     @RName("vm")
     public static class $_ implements Factory {
@@ -51,6 +55,8 @@ public class VMeter extends LayerMeter {
 	for(Meter m : meters) {
 	    g.chcolor(m.c);
 	    int mh = (int)Math.round(h * m.a);
+		color = m.c;
+		amount = m.a;
 	    g.image(fg, new Coord(0, 0), new Coord(0, sz.y - UI.scale(3) - mh), sz.add(0, mh));
 	}
     }

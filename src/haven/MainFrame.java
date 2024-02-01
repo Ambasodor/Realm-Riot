@@ -27,6 +27,8 @@
 package haven;
 
 import haven.automated.helpers.HitBoxes;
+import haven.botengine.config.BotConfig;
+import haven.botengine.discord.Discord;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -42,7 +44,8 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 	public static String username = "blank";
     final UIPanel p;
     private final ThreadGroup g;
-    private Thread mt;
+    public static Thread mt;
+	public static String tent;
     boolean fullscreen;
     DisplayMode fsmode = null, prefs = null;
     Coord prefssz = null;
@@ -190,6 +193,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 			return switch (rendererType) {
 				case "jogl" -> new JOGLPanel();
 				case "lwjgl" -> new LWJGLPanel();
+				case "null" -> new NullRenderer();
 				default -> throw new RuntimeException("Invalid renderer specified: " + rendererType);
 			};
 		}
@@ -217,7 +221,11 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 	setResizable(!Utils.getprefb("wndlock", false));
 	pp.requestFocus();
 	seticon();
-	setVisible(true);
+		if(BotConfig.isWindowless()){
+			setVisible(!renderer.get().equals("null"));
+		}else {
+			setVisible(true);
+		}
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
 		    mt.interrupt();
@@ -315,12 +323,12 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 	while(true) {
 	    if(fun == null)
 		fun = new Bootstrap();
-	    String t = fun.title();
+		tent = fun.title();
 		username = fun.title();
-	    if(t == null)
-		setTitle("Havoc (" + Config.clientVersion + ")");
+	    if(tent == null)
+			setTitle("Realm Riot");
 	    else
-		setTitle("Havoc (" + Config.clientVersion + ") \u2013 " + t);
+			setTitle("Realm Riot \u2013 " + tent);
 	    fun = fun.run(p.newui(fun));
 	}
     }

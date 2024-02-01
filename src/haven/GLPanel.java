@@ -84,7 +84,36 @@ public interface GLPanel extends UIPanel, UI.Context {
 		framelag = Loop.this.frameno - frameno;
 	    }
 	}
+		public void runHeadless() {
+			try {
+				while(true) {
+					UI ui;
+					synchronized(uilock) {
+						this.lockedui = ui = this.ui;
+						uilock.notifyAll();
+					}
 
+					synchronized(ui) {
+						ed.dispatch(ui);
+						ui.mousehover(ui.mc);
+
+						if(ui.sess != null) {
+							ui.sess.glob.ctick();
+						}
+
+						ui.tick();
+					}
+
+					Thread.sleep(10);
+				}
+			} catch (Exception ignored) {}
+			finally {
+				synchronized(uilock) {
+					lockedui = null;
+					uilock.notifyAll();
+				}
+			}
+		}
 	private class GLFinish implements BGL.Request {
 	    public void run(GL gl) {
 		long start = System.nanoTime();

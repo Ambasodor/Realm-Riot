@@ -1,0 +1,19 @@
+#ABUTTON LAYER FOR RES from//\PanicButton.res
+#String pr
+paginae/nightdawg/OtherTools
+#uint16 pver
+4
+#String name
+Panic Button
+#String preq
+
+#uint16 hk
+0
+#uint16 ad length
+3
+#String ad[0]
+@
+#String ad[1]
+OtherTools
+#String ad[2]
+PanicButton

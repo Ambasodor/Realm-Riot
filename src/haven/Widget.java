@@ -1124,6 +1124,14 @@ public class Widget {
 	}
 	return(null);
     }
+	public <T> ArrayList<T> getchilds(Class<T> c) {
+		ArrayList<T> widgets = new ArrayList<>();
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (c.isInstance(wdg))
+				widgets.add(c.cast(wdg));
+		}
+		return widgets;
+	}
 
     @Deprecated
     public <T extends Widget> T findchild(Class<T> cl) {

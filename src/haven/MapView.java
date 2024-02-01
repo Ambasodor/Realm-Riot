@@ -50,7 +50,8 @@ import static haven.OCache.posres;
 
 public class MapView extends PView implements DTarget, Console.Directory, PFListener {
     public static boolean clickdb = false;
-    public long plgob = -1;
+	public long plgob = -1;
+	public long plgobid;
     public Coord2d cc;
     public final Glob glob;
     private int view = 2;
@@ -60,6 +61,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     public Camera camera = restorecam();
     private Loader.Future<Plob> placing = null;
     private Grabber grab;
+	public Thread pfthread;
     private Selector selection;
     private Coord3f camoff = new Coord3f(Coord3f.o);
     public double shake = 0.0;
@@ -78,7 +80,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	public final PartyCircles partyCircles;
 
 	public Pathfinder pf;
-	public Thread pfthread;
 	public CheckpointManager checkpointManager;
 	public Thread checkpointManagerThread;
 
@@ -3118,5 +3119,8 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		} else {
 			ui.error("Tile outside all (visible) support range. Preventing mining command");
 		}
+	}
+	public Glob getGlob() {
+		return glob;
 	}
 }

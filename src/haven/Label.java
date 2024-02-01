@@ -29,11 +29,11 @@ package haven;
 import java.awt.Color;
 
 public class Label extends Widget {
-    Text.Foundry f;
-    Text text;
-    String texts;
-    Color col = Color.WHITE;
-	Color stroke = Color.BLACK;
+	public Text.Foundry f;
+	public Text text;
+	public String texts;
+	public Color col = Color.WHITE;
+	public Color stroke = Color.BLACK;
 	
     @RName("lbl")
     public static class $_ implements Factory {

@@ -27,6 +27,8 @@
 package haven;
 
 import haven.automated.AutoFlowerRepeater;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.Color;
 import java.sql.*;
@@ -36,6 +38,7 @@ import java.util.*;
 import static java.lang.Math.PI;
 
 public class FlowerMenu extends Widget {
+	private static final Logger log = LoggerFactory.getLogger(Widget.class);
     public static final Color pink = new Color(255, 0, 128);
 	public static final Color ptc = Color.WHITE;
 	public static final Color ptcRed = new Color(255, 50, 50);
@@ -89,7 +92,12 @@ public class FlowerMenu extends Widget {
 			}
 			resize(text.sz().x + UI.scale(25), ph);
 		}
-
+		public Petal(String name) {
+			super(Coord.z);
+			this.name = name;
+			text = ptf.render(name, ptc);
+			resize(text.sz().x + UI.scale(25), ph);
+		}
 	public void move(Coord c) {
 	    this.c = c.sub(sz.div(2));
 	}
@@ -326,7 +334,14 @@ public class FlowerMenu extends Widget {
 	public static void setNextSelection(String name) {
 		nextAutoSel = name;
 	}
-
+	public void choosestring(String action) {
+		for (Petal option : opts) {
+			if (option.name.equals(action)) {
+				choose(option);
+				break;
+			}
+		}
+	}
 	public void tryAutoSelect() {
 		if (nextAutoSel != null) {
 			int i = 0;

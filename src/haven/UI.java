@@ -45,6 +45,7 @@ public class UI {
     private final Map<Widget, Integer> rwidgets = new HashMap<Widget, Integer>();
     Environment env;
     public Receiver rcvr;
+	public GameUI gui;
     public Coord mc = Coord.z, lcc = Coord.z;
     public Session sess;
     public boolean modshift, modctrl, modmeta, modsuper;
@@ -59,7 +60,6 @@ public class UI {
     private boolean gprefsdirty = false;
     public final ActAudio.Root audio = new ActAudio.Root();
     private static final double scalef;
-	public GameUI gui = null;
 
 	public int lastid = 0;
     
@@ -387,7 +387,10 @@ public class UI {
 	removeid(wdg);
 	wdg.reqdestroy();
     }
-    
+	public Map<Widget, Integer> getRwidgets() {
+		return rwidgets;
+	}
+
     public void destroy(int id) {
 	synchronized(this) {
 	    Widget wdg = getwidget(id);

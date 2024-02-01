@@ -34,8 +34,13 @@ import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import haven.automated.*;
 import haven.automated.cookbook.CookingRecipes;
+import haven.botengine.BotEnvironment;
+import haven.botengine.discord.Discord;
+import haven.JOGLPanel;
 
 import java.util.*;
+
+import static haven.JOGLPanel.discordjava;
 
 public class MenuGrid extends Widget implements KeyBinding.Bindable {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
@@ -385,6 +390,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
 		makeLocal("paginae/nightdawg/OtherTools/MiningSafetyAssistant");
 		makeLocal("paginae/nightdawg/OtherTools/CookBook");
+		makeLocal("paginae/nightdawg/OtherTools/PanicButton");
 		makeLocal("paginae/nightdawg/OtherTools/Add9CoalScript");
 		makeLocal("paginae/nightdawg/OtherTools/Add12CoalScript");
 		makeLocal("paginae/nightdawg/OtherTools/GridHeightCalculator");
@@ -601,6 +607,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
 	public void use(String[] ad) {
 		GameUI gui = ui.gui;
+
 		if (gui == null)
 			return;
 		if (ad[1].equals("switchToCombatDeck")) {
@@ -637,7 +644,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 						gui.tunnelerBotThread = null;
 					}
 				}
-			} else if (ad[2].equals("CleanupBot")) {
+			}
+			else if (ad[2].equals("CleanupBot")) {
 				if (gui.cleanupBot == null && gui.cleanupThread == null) {
 					gui.cleanupBot = new CleanupBot(gui);
 					gui.add(gui.cleanupBot, new Coord(gui.sz.x/2 - gui.cleanupBot.sz.x/2, gui.sz.y/2 - gui.cleanupBot.sz.y/2 - 200));
@@ -767,6 +775,16 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.add(gui.cookbook, new Coord(gui.sz.x/2 - gui.cookbook.sz.x/2, gui.sz.y/2 - gui.cookbook.sz.y/2 - 200));
 				}
 				gui.cookbook.toggleShow();
+			} else if (ad[2].equals("PanicButton")) {
+				if (gui.PanicButtonThread == null) {
+					gui.PanicButtonThread = new Thread(new PanicButton(ui,discordjava), "PanicButton");
+					gui.PanicButtonThread.start();
+				} else {
+					gui.PanicButtonThread.interrupt();
+					gui.PanicButtonThread = null;
+					gui.PanicButtonThread = new Thread(new PanicButton(ui,discordjava), "PanicButton");
+					gui.PanicButtonThread.start();
+				}
 			} else if (ad[2].equals("Add9Coal")) {
 				gui.runActionThread(new Thread(new AddCoalToSmelter(gui, 9), "Add9Coal"));
 			} else if (ad[2].equals("Add12Coal")) {

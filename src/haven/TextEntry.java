@@ -43,6 +43,7 @@ public class TextEntry extends Widget implements ReadLine.Owner {
     public static final int wmarg = lcap.sz().x + rcap.sz().x + UI.scale(1);
     public boolean dshow = false;
     public ReadLine buf;
+	@Deprecated public String text;
     public int sx;
     public boolean pw = false;
     private boolean dirty = false;

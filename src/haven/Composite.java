@@ -43,6 +43,7 @@ public class Composite extends Drawable implements EquipTarget {
     public int pseq;
     public List<MD> nmod;
     public List<ED> nequ;
+	public Collection<ResData> oldposes = Collections.emptyList(), oldtposes;
     private Collection<ResData> nposes = null, tposes = null;
     private boolean nposesold, retainequ = false;
     private float tptime;
@@ -184,6 +185,7 @@ public class Composite extends Drawable implements EquipTarget {
     
     public void tposes(Collection<ResData> poses, WrapMode mode, float time) {
 	this.tposes = poses;
+		oldtposes = poses;
 	this.tpmode = mode;
 	this.tptime = time;
     }

@@ -1,5 +1,8 @@
 package haven;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
@@ -12,6 +15,7 @@ import java.util.Base64;
  */
 
 public class AES {
+    private static final Logger log = LoggerFactory.getLogger(haven.encryption.AES.class);
     private SecretKey key;
     private final int T_LEN = 128;
     private byte[] IV;

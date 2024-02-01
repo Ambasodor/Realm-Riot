@@ -1305,6 +1305,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			return false;
 		}
 	}
+	public boolean isplayer() {
+		try { //not clean but when multi-sessioning client can crash here when second client is booting.
+			final UI ui = glob.ui.get();
+			return ui.gui.map.plgob == id;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 	public boolean isMoving() {
 		return (getattr(Moving.class) != null);

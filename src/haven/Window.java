@@ -543,4 +543,10 @@ public class Window extends Widget implements DTarget {
 		    g.getimage(img -> Debug.dumpimage(img, args[0]));
 	    });
     }
+
+	public void close() {
+		super.wdgmsg("close");
+	}
+
+
 }

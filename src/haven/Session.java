@@ -53,12 +53,13 @@ public class Session implements Resource.Resolver {
     public static final int SESSERR_MESG = 6;
 
     static final int ackthresh = 30;
+	public String state = "conn";
 
     public final Connection conn;
     public int connfailed = 0;
     public String connerror = null;
     LinkedList<PMessage> uimsgs = new LinkedList<PMessage>();
-    String username;
+    public String username;
     final Map<Integer, CachedRes> rescache = new TreeMap<Integer, CachedRes>();
     public final Glob glob;
 	public UI ui;
@@ -278,6 +279,9 @@ public class Session implements Resource.Resolver {
     public void close() {
 	conn.close();
     }
+	public synchronized boolean alive() {
+		return(state != "dead");
+	}
 
     public void queuemsg(PMessage pmsg) {
 	conn.queuemsg(pmsg);

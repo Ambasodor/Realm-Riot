@@ -30,8 +30,16 @@ import java.util.*;
 import java.awt.Toolkit;
 import java.awt.Robot;
 import java.awt.Point;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
+import haven.botengine.DefaultCommands;
+import haven.botengine.ScriptRunner;
+import haven.botengine.config.BotConfig;
+import haven.botengine.discord.Discord;
+import haven.commands.*;
 import haven.render.*;
 import haven.render.States;
 import haven.render.gl.*;
@@ -44,6 +52,11 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
     private JOGLEnvironment env = null;
     private Area shape;
     private Pipe base, wnd;
+	private UI ui;
+	public static Discord discordjava;
+	public final Discord discord = new Discord(this); //если нужно будет вернуть аларм в дс на китов "public static Discord discord;" , на нормальную "private final Discord discord = new Discord(this);
+	private final ExecutorService executorService = Executors.newFixedThreadPool(1);
+	private final ScriptRunner scriptRunner = new ScriptRunner(executorService, this, discord);
     private final Loop main = new Loop(this);
 
     public static class ProfileException extends Environment.UnavailableException {
@@ -85,6 +98,7 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
 
     public JOGLPanel() {
 	super(mkcaps(), null, null);
+	discordjava = new Discord(this);  //если нужно будет вернуть аларм в дс на китов или если нужно будет нормальную, закомить
 	base = new BufPipe();
 	base.prep(new FragColor<>(FragColor.defcolor)).prep(new DepthBuffer<>(DepthBuffer.defdepth));
 	base.prep(FragColor.blend(new BlendMode()));
@@ -116,6 +130,7 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
 	    });
 	setFocusTraversalKeysEnabled(false);
 	newui(null);
+		DefaultCommands.run(this, scriptRunner);
     }
 
     private boolean iswap() {
@@ -217,43 +232,77 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
     }
 
     private void renderloop() {
-	try {
-	    uglyjoglhack();
-	    synchronized(this) {
-		if(env == null)
-		    throw(new RuntimeException("Did not get GL environment even after display"));
-		notifyAll();
-	    }
-	    while(true) {
-		long wst = System.nanoTime();
-		env.submitwait();
-		main.ridletime += System.nanoTime() - wst;
-		uglyjoglhack();
-	    }
-	} catch(InterruptedException e) {
-	}
+		if (BotConfig.isWindowless()){
+			synchronized (this) {
+				notifyAll();
+			}
+			while(true){
+				long wst = System.nanoTime();
+				main.ridletime += System.nanoTime() - wst;
+			}
+		}
+		if (!BotConfig.isWindowless()) {
+			try {
+				uglyjoglhack();
+				synchronized (this) {
+					if (env == null)
+						throw (new RuntimeException("Did not get GL environment even after display"));
+					notifyAll();
+				}
+				while (true) {
+					long wst = System.nanoTime();
+					env.submitwait();
+					main.ridletime += System.nanoTime() - wst;
+					uglyjoglhack();
+				}
+			} catch (InterruptedException e) {
+			}
+		}
     }
 
     public void run() {
-	Thread drawthread = new HackThread(JOGLPanel.this::renderloop, "Render thread");
-	drawthread.start();
-	try {
-	    try {
-		synchronized(JOGLPanel.this) {
-		    while(env == null)
-			JOGLPanel.this.wait();
+		if (BotConfig.isWindowless()) {
+			Thread drawthread = new HackThread(JOGLPanel.this::renderloop, "Render thread");
+			drawthread.start();
+			try {
+				try {
+					synchronized (JOGLPanel.this) {
+						while (env == null)
+							JOGLPanel.this.wait();
+					}
+					main.run();
+				} finally {
+					drawthread.interrupt();
+					drawthread.join();
+				}
+			} catch (InterruptedException e) {
+			}
 		}
-		main.run();
-	    } finally {
-		drawthread.interrupt();
-		drawthread.join();
-	    }
-	} catch(InterruptedException e) {
-	}
+		if (!BotConfig.isWindowless()) {
+			Thread drawthread = new HackThread(this::renderloop, "Render thread");
+			drawthread.start();
+			try {
+				GLRender buf = null;
+				try {
+					synchronized (this) {
+						while (this.env == null)
+							this.wait();
+					}
+					main.run();
+				} finally {
+					if (buf != null)
+						buf.dispose();
+					drawthread.interrupt();
+					drawthread.join();
+				}
+			} catch (InterruptedException e) {
+			}
+		}
     }
 
     public UI newui(UI.Runner fun) {
-	return(main.newui(fun));
+		ui = (main.newui(fun));
+		return ui;
     }
 
     public void background(boolean bg) {
@@ -297,8 +346,32 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
 			}},
 		    "GL crasher").start();
 	    });
+		cmdmap.put("run", (cons, args) -> new RunScript(this, scriptRunner).run(cons, args));
+		cmdmap.put("stop", (cons, args) -> new StopScripts(executorService, this).run(cons, args));
+		cmdmap.put("printresources", (cons, args) -> new PrintResources(this).run(cons, args));
+		cmdmap.put("schedule", (cons, args) -> new ScheduledTasksToDiscord(discord, scriptRunner).run(cons, args));
+		cmdmap.put("running", (cons, args) -> new RunningScriptToDiscord(discord, scriptRunner).run(cons, args));
+		cmdmap.put("ingame?", (cons, args) -> new isLoggined(ui, discord, scriptRunner).run(cons, args));
+		cmdmap.put("screen", (cons, args) -> new Makescreen(ui,discord,scriptRunner).run(cons, args));
+		cmdmap.put("cancel", (cons, args) -> new Cancel(discord, scriptRunner).run(cons, args));
+		cmdmap.put("help", (cons, args) -> new Help(discord, scriptRunner).run(cons, args));
     }
     public Map<String, Console.Command> findcmds() {
 	return(cmdmap);
     }
+	public UI getUI() {
+		return ui;
+	}
+	public Optional<GameUI> findGameUI() {
+		GameUI visibleGameUI = null;
+		for (Widget widget: getUI().getRwidgets().keySet()) {
+			if (widget instanceof GameUI && widget.visible) {
+				visibleGameUI = (GameUI) widget;
+			}
+		}
+		return Optional.ofNullable(visibleGameUI);
+	}
+	public ScriptRunner getScriptRunner() {
+		return scriptRunner;
+	}
 }

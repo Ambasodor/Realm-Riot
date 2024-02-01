@@ -39,6 +39,7 @@ import haven.render.sl.*;
 public class Glob {
     public final OCache oc = new OCache(this);
     public final MCache map;
+	public WeakReference<UI> ui;
     public final Session sess;
     public final Loader loader = new Loader();
     public double gtime, sgtime, epoch = Utils.rtime();

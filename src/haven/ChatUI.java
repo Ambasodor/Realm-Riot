@@ -60,6 +60,8 @@ public class ChatUI extends Widget {
 	new Color(255, 0, 0),
     };
     public Channel sel = null;
+	public static String lastmsage;
+	public static String areach;
     public int urgency = 0;
     private final Selector chansel;
     private Coord base = Coord.z;
@@ -1051,6 +1053,7 @@ public class ChatUI extends Widget {
 	    if(msg == "msg") {
 		Integer from = (Integer) args[0];
 		String line = (String) args[1];
+			areach = line;
 			if(process(line, -1)) {
 				if (from == null) {
 					append(new MyMessage(line), -1);
@@ -1079,6 +1082,7 @@ public class ChatUI extends Widget {
 		Integer from = (Integer)args[0];
 		long gobid = Utils.uint32((Integer)args[1]);
 		String line = (String)args[2];
+			lastmsage = line;
 			if(process(line, gobid)) {
 				Color col = Color.WHITE;
 				synchronized (ui.sess.glob.party.memb) {

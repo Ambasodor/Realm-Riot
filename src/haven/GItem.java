@@ -46,6 +46,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     public int num = -1;
     public Widget contents = null;
     public String contentsnm = null;
+	private String name;
     public Object contentsid = null;
     public ContentsWindow contentswnd = null;
     public int infoseq;
@@ -56,7 +57,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     private List<ItemInfo> info = Collections.emptyList();
 	public boolean sendttupdate = false;
 	public double studytime = 0.0;
-	private QBuff quality;
+	public QBuff quality;
 	private boolean postProcessed = false;
 
     @RName("item")
@@ -718,5 +719,17 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 		} catch (NumberFormatException ex){
 			return 0;
 		}
+	}
+	public String getName() {
+		if (name == null) {
+			try {
+				Optional.ofNullable(ItemInfo.find(ItemInfo.Name.class, info()))
+						.ifPresent(itemName -> name = itemName.str.text);
+			} catch (Loading ex) {
+				// Ignored
+			}
+		}
+
+		return name;
 	}
 }

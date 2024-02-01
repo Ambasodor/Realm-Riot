@@ -56,17 +56,29 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static final Text.Foundry actBarKeybindsFoundry = new Text.Foundry(Text.sans.deriveFont(java.awt.Font.BOLD), 12);
     public final String chrid, genus;
 	public static long playerId = -1;
+	public MiniMap mmap;
     public final long plid;
+	public static boolean needtotakescreenshot = false;
+
+	public boolean partyperm = false;
+
+	public String partyperms = null;
+	public boolean occupied = false;
+	public boolean collected = false;
+	public Text lastmsg;
+	public double msgtime;
+	public Speedget speed;
+	public List<Integer> gettime = new ArrayList<>();
+	public List<String> gettimestring = new ArrayList<>();
     private final Hidepanel ulpanel, umpanel, urpanel, brpanel, menupanel;
 	public static AlignPanel questObjectivesPanel = null;
     public Widget portrait;
+	private List<Widget> cmeters = new LinkedList<Widget>();
     public MenuGrid menu;
     public MapView map;
     public GobIcon.Settings iconconf;
     public Fightview fv;
     private List<Widget> meters = new LinkedList<Widget>();
-    private Text lastmsg;
-    private double msgtime;
     private Window invwnd, equwnd, /*makewnd,*/ srchwnd, iconwnd;
 	public CraftWindow makewnd;
     private Coord makewndc = Utils.getprefc("makewndc", new Coord(400, 200));
@@ -113,6 +125,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread oceanScoutBotThread;
 	public TunnelerBot tunnelerBot;
 	public Thread tunnelerBotThread;
+	public Thread PanicButtonThread;
+	public PanicButton panicButton;
 	public static RecipeCollector recipeCollector;
 	private static Thread recipeCollectorThread;
 	public CookingRecipes cookbook;
@@ -2470,7 +2484,20 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		return null;
 	}
-
+	public IMeter getmeter(String name) {
+		for (Widget meter : meters) {
+			if (meter instanceof IMeter) {
+				IMeter im = (IMeter) meter;
+				try {
+					Resource res = im.bg.get();
+					if (res != null && res.basename().equals(name))
+						return im;
+				} catch (Loading l) {
+				}
+			}
+		}
+		return null;
+	}
 	public List<IMeter.Meter> getmeters(String name) {
 		for (Widget meter : meters) {
 			if (meter instanceof IMeter) {

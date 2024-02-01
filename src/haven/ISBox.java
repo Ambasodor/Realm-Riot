@@ -35,7 +35,7 @@ public class ISBox extends Widget implements DTarget {
     static Tex bg = Resource.loadtex("gfx/hud/bosq");
     static Text.Foundry lf;
     private Indir<Resource> res;
-    private Text label;
+    public Text label;
     private Value value;
     private Button take;
     static {

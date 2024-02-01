@@ -26,6 +26,7 @@
 
 package haven;
 
+
 import haven.render.*;
 import haven.res.gfx.fx.msrad.MSRad;
 import haven.resutil.Ridges;
@@ -3847,7 +3848,11 @@ public class OptWnd extends Window {
 	}
 
 	public static TextEntry webmapEndpointTextEntry;
+	public static TextEntry ChannelnameTextEntry;
+	public static TextEntry MessagetochannelEntry;
 	public static String mapClientEndpoint = Utils.getpref("webMapEndpoint", "");
+	public static String ChannelnameString = Utils.getpref("ChannelnameString", "");
+	public static String MessagetochannelString = Utils.getpref("MessagetochannelString", "");
 	public static CheckBox enableMapUploaderCheckbox;
 	public static boolean mapUploadBoolean = Utils.getprefb("enableMapUploader", false);
 	public static CheckBox enableLocationTrackingCheckbox;
@@ -3922,8 +3927,22 @@ public class OptWnd extends Window {
 				};
 				prev = add(colorCheckbox, prev.pos("ur").adds(10, 0));
 			}
-			prev = add(new Label("Api Token:"), prev.pos("bl").adds(0, 16).x(0));
-
+			prev = add(new Label("Panic channel name:"), prev.pos("bl").adds(0, 16).x(0));
+			prev = add(ChannelnameTextEntry = new TextEntry(UI.scale(220), ChannelnameString){
+				protected void changed() {
+					Utils.setpref("ChannelnameString", this.buf.line());
+					ChannelnameString = this.buf.line();
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, 0));
+			prev = add(new Label("Panic message to discord:"), prev.pos("bl").adds(0, 16).x(0));
+			prev = add(MessagetochannelEntry = new TextEntry(UI.scale(220), MessagetochannelString){
+				protected void changed() {
+					Utils.setpref("MessagetochannelString", this.buf.line());
+					MessagetochannelString = this.buf.line();
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, 0));
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 30).x(UI.scale(62)));
 

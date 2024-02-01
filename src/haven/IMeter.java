@@ -128,6 +128,10 @@ public void draw(GOut g) {
 	private enum MeterType {
 		HEALTH, ENERGY, STAMINA, HORSE, UNKNOWN
 	}
+	public String getmeter() {
+		KeyboundTip tt = (KeyboundTip) tooltip;
+		return (tt.base);
+	}
 	private void determineType(Resource res) {
 		if (type == null) {
 			switch (res.basename()) {

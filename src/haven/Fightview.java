@@ -59,7 +59,7 @@ public class Fightview extends Widget {
     public Indir<Resource> lastact = null;
     public double lastuse = 0;
     public Mainrel curdisp;
-    private List<Relation> nonmain = Collections.emptyList();
+    public List<Relation> nonmain = Collections.emptyList();
 
     public class Relation {
         public final long gobid;

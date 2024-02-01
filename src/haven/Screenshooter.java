@@ -92,7 +92,13 @@ public class Screenshooter extends Window {
 	    this.map = map;
 	    this.ui = ui;
 	    Coord sz = PUtils.imgsz(map);
-	    int w = Math.min(200 * sz.x / sz.y, 150);
+		File outputfile = new File("res/saved.png");
+		try {
+			ImageIO.write(ui, "png", outputfile);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		int w = Math.min(200 * sz.x / sz.y, 150);
 	    int h = w * sz.y / sz.x;
 	    Coord tsz = new Coord(w, h);
 	    this.mapt = new TexI(PUtils.convolvedown(map, tsz, thumbflt));
@@ -260,6 +266,8 @@ public class Screenshooter extends Window {
 	    byte[] data = buf.toByteArray();
 	    buf = null;
 	    setstate("Connecting...");
+		File outputfile = new File("image.jpg");
+		ImageIO.write(img, "jpg", outputfile);
 	    URL pared = Utils.uriparam(tgt, "p", pub.a?"y":"n").toURL();
 	    HttpURLConnection conn = (HttpURLConnection)pared.openConnection();
 	    conn.setDoOutput(true);
@@ -333,8 +341,7 @@ public class Screenshooter extends Window {
 	ui.destroy(btn);
 	btn = add(new Button(125, "Cancel", false, th::interrupt), btnc);
     }
-
-    public static void take(GameUI gameui, URI tgt) {
+    public static void take(GameUI gameui) {
 	new Object() {
 	    BufferedImage map = null, ui = null;
 	    {
@@ -357,7 +364,6 @@ public class Screenshooter extends Window {
 			    shot.sdw = pref.lshadow.val;
 			    // shot.fsaa = pref.fsaa.val; XXXRENDER
 			    shot.camera = camera;
-			    gameui.addchild(new Screenshooter(tgt, shot), "misc", new Coord2d(0.1, 0.1));
 			});
 		}
 	    }
