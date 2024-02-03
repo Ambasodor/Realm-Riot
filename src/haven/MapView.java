@@ -52,6 +52,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     public static boolean clickdb = false;
 	public long plgob = -1;
 	public long plgobid;
+	public Coord2d pllastcc;
     public Coord2d cc;
     public final Glob glob;
     private int view = 2;
@@ -2259,10 +2260,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	    if(done) {
 		synchronized(ui) {
 		    if(mapcl != null) {
-			if(objcl == null)
-			    hit(pc, mapcl, null);
-			else
-			    hit(pc, mapcl, objcl);
+			if(objcl == null) {
+				hit(pc, mapcl, null);
+			} else {
+				hit(pc, mapcl, objcl);
+			}
 		    } else {
 			nohit(pc);
 		    }
@@ -2288,7 +2290,20 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		int modflags = ui.modflags();
 		if (gui != null && gui.vhand != null && clickb == 1)
 			modflags = modflags & ~4;
-
+		if (clickb == 1){
+			pllastcc = mc;
+		}
+		if (clickb == 3) {
+			Object[] args = {pc, mc.floor(posres), clickb, modflags};
+			if (inf != null) {
+				args = Utils.extend(args, inf.clickargs());
+				Long gobid = new Long((Integer) inf.clickargs()[1]);
+				Gob gob = glob.oc.getgob(gobid);
+				if (gob != null) {
+					pllastcc = gob.rc;
+				}
+			}
+		}
 	    Object[] args = {pc, mc.floor(posres), clickb, modflags};
 	    if(inf != null) {
 			args = Utils.extend(args, inf.clickargs());

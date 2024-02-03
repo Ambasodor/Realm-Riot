@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.util.Optional;
 import java.util.function.*;
 import haven.render.*;
 
@@ -65,6 +66,14 @@ public class Following extends Moving {
 	return(gob.glob.oc.getgob(this.tgt));
     }
 
+	public Optional<Coord2d> getDest() {
+		Gob tgt = tgt();
+		if (tgt != null) {
+			return Optional.of(new Coord2d(tgt.getc()));
+		} else {
+			return Optional.empty();
+		}
+	}
     private Skeleton.Pose getpose(Gob tgt) {
 	if(tgt == null)
 	    return(null);

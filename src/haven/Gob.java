@@ -82,6 +82,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private Overlay customSearchOverlay;
 	private Overlay customOverlay;
 	private Overlay gobChaseVector = null;
+	private Overlay goblinevector = null;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
 	public int playerPoseUpdatedCounter = 0;
 	public Boolean isMannequin = null;
@@ -1090,6 +1091,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				gobChaseVector.remove();
 				gobChaseVector = null;
 			}
+			if (goblinevector != null) {
+				goblinevector.remove();
+				goblinevector = null;
+			}
 		}
 		if (a instanceof Homing) {
 			Homing homing = (Homing) a;
@@ -1104,6 +1109,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					gobChaseVector.remove();
 					gobChaseVector = null;
 				}
+		}
+		if (a instanceof LinMove) {
+			LinMove linMove = (LinMove) a;
+			if (goblinevector == null && linMove != null) {
+				goblinevector = new Overlay(this, new LinePathSprite(this, linMove));
+				addol(goblinevector);
+			} else if (goblinevector != null && linMove != null) {
+				goblinevector.remove();
+				goblinevector = new Overlay(this,new LinePathSprite(this, linMove));
+				addol(goblinevector);
+			} else if (goblinevector != null) {
+				goblinevector.remove();
+				goblinevector = null;
+			}
 		}
 	}
 
