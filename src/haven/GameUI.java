@@ -123,6 +123,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	private Gob detectGob;
 	public OceanScoutBot OceanScoutBot;
 	public Thread oceanScoutBotThread;
+	public WhaleBot OrcaFinder;
+	public Thread OrcaFinderThread;
 	public TunnelerBot tunnelerBot;
 	public Thread tunnelerBotThread;
 	public Thread PanicButtonThread;

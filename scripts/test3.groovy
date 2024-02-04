@@ -1,1 +1,1 @@
-player.closeGameWindow()
+player.discordSendScreen("res/saved.png");

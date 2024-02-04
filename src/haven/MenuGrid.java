@@ -35,8 +35,10 @@ import haven.Resource.AButton;
 import haven.automated.*;
 import haven.automated.cookbook.CookingRecipes;
 import haven.botengine.BotEnvironment;
+import haven.botengine.ScriptRunner;
 import haven.botengine.discord.Discord;
 import haven.JOGLPanel;
+import haven.commands.RunScript;
 
 import java.util.*;
 
@@ -360,6 +362,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_bronzeshield");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_fyrdsmanshield");
 
+		makeLocal("paginae/nightdawg/Bots/OrcaFinder");
 		makeLocal("paginae/nightdawg/Bots/OceanScoutBot");
 		makeLocal("paginae/nightdawg/Bots/AutoTunneler");
 		makeLocal("paginae/nightdawg/Bots/CleanupBot");
@@ -628,6 +631,21 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 						gui.OceanScoutBot.reqdestroy();
 						gui.OceanScoutBot = null;
 						gui.oceanScoutBotThread = null;
+					}
+				}
+			} if (ad[2].equals("OrcaFinder")) {
+				if (gui.OrcaFinder == null && gui.OrcaFinderThread == null) {
+					gui.OrcaFinder = new WhaleBot(gui);
+					//gui.add(gui.OrcaFinder, new Coord(gui.sz.x / 2 - gui.OrcaFinder.sz.x / 2, gui.sz.y / 2 - gui.OrcaFinder.sz.y / 2 - 200));
+					gui.OrcaFinderThread = new Thread(gui.OrcaFinder, "OrcaFinder");
+					gui.OrcaFinderThread.start();
+				} else {
+					if (gui.OrcaFinder != null) {
+						gui.OrcaFinder.stop = true;
+						gui.OrcaFinder.stop();
+						gui.OrcaFinder.reqdestroy();
+						gui.OrcaFinder = null;
+						gui.OrcaFinderThread = null;
 					}
 				}
 			} else if (ad[2].equals("AutoTunneler")) {

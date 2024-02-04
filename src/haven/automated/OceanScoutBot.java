@@ -254,7 +254,9 @@ public class OceanScoutBot extends Window implements Runnable {
     }
 
     public void stop() {
-        ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.floor(posres), 1, 0);
+        if (ui != null || gui != null) {
+            ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.floor(posres), 1, 0);
+        }
         if (gui.map.pfthread != null) {
             gui.map.pfthread.interrupt();
         }
