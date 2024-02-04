@@ -1744,7 +1744,10 @@ public class WhaleBot extends Window implements Runnable {
     }
 
     public double getHourglass() {
-        return gui.prog.prog;
+        if (gui.prog != null) {
+            return gui.prog.prog;
+        }
+        return -1;
     }
 
     public Discord getDiscord() {

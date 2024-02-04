@@ -760,7 +760,10 @@ public void closewindow(Window w){
         }
     }
     public double getHourglass() {
-        return environment.getGui().prog.prog;
+        if (environment.getGui().prog != null) {
+            return environment.getGui().prog.prog;
+        }
+        return -1;
     }
     public void playAlarmsound(){
         Defer.later(() -> {
