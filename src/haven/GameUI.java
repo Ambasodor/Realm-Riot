@@ -30,6 +30,7 @@ import haven.automated.*;
 import haven.automated.cookbook.CookingRecipes;
 import haven.automated.cookbook.RecipeCollector;
 import haven.automated.mapper.MappingClient;
+import haven.botengine.GroovyScriptList;
 import haven.res.ui.stackinv.ItemStack;
 import haven.resutil.Ridges;
 
@@ -123,6 +124,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	private Gob detectGob;
 	public OceanScoutBot OceanScoutBot;
 	public Thread oceanScoutBotThread;
+	public GroovyScriptList groovyScriptList;
 	public WhaleBot OrcaFinder;
 	public Thread OrcaFinderThread;
 	public TunnelerBot tunnelerBot;
@@ -424,6 +426,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	questhelper = new QuestHelper();
 	questhelper.hide();
 	add(questhelper, UI.scale(new Coord(187, 50)));
+
+	groovyScriptList = new GroovyScriptList();
+	groovyScriptList.hide();
+	add(groovyScriptList, UI.scale(new Coord(187, 50)));
+
 	makewnd = add(new CraftWindow(), UI.scale(400, 200));
 	makewnd.hide();
 	quickslots = add(new QuickSlotsWdg(){

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.time.Duration;
+import java.util.List;
 import java.util.Queue;
 import java.util.*;
 import java.util.concurrent.*;
@@ -31,7 +32,7 @@ public class ScriptRunner {
 
 
     public final Queue<String> scriptQueue = new LinkedList<>();
-    private final Map<String, ScheduledFuture<?>> scheduledTasks = new LinkedHashMap<>();
+    public final Map<String, ScheduledFuture<?>> scheduledTasks = new LinkedHashMap<>();
     private final Map<String, Object> globalVariables = new HashMap<>();
     public volatile String runningScript = null;
 

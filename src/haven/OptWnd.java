@@ -584,7 +584,9 @@ public class OptWnd extends Window {
 	public static boolean expWindowLocationIsTop = Utils.getprefb("expWindowLocationIsTop", true);
 	public static Dropbox<Integer> sweeperDurationDropbox;
 	public static final List<Integer> sweeperDurations = Arrays.asList(5, 10, 15, 30, 45, 60, 120);
+	public static final List<String> timemark = Arrays.asList("S", "M", "H", "D");
 	public static int sweeperSetDuration = Utils.getprefi("sweeperSetDuration", 3);
+	public static int timemarkSet = Utils.getprefi("timemarkSet", 0);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {

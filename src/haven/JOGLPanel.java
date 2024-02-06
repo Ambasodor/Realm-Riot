@@ -54,7 +54,9 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
     private Pipe base, wnd;
 	private UI ui;
 	private final Discord discord = new Discord(this);
-	public static Discord discordjava; //если нужно будет вернуть аларм в дс на китов "public static Discord discord;" , на нормальную "private final Discord discord = new Discord(this);
+	public static JOGLPanel paneljava;
+	public static ScriptRunner scriptRunnerjava;
+	public static Discord discordjava;
 	private final ExecutorService executorService = Executors.newFixedThreadPool(1);
 	private final ScriptRunner scriptRunner = new ScriptRunner(executorService, this, discord);
     private final Loop main = new Loop(this);
@@ -98,8 +100,9 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
 
     public JOGLPanel() {
 	super(mkcaps(), null, null);
+	paneljava = this;
 	discordjava = discord;
-	//Discord discordjava = new Discord(this);  //если нужно будет вернуть аларм в дс на китов или если нужно будет нормальную, закомить
+	scriptRunnerjava = scriptRunner;
 	base = new BufPipe();
 	base.prep(new FragColor<>(FragColor.defcolor)).prep(new DepthBuffer<>(DepthBuffer.defdepth));
 	base.prep(FragColor.blend(new BlendMode()));

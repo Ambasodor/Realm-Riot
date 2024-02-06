@@ -35,11 +35,15 @@ import haven.Resource.AButton;
 import haven.automated.*;
 import haven.automated.cookbook.CookingRecipes;
 import haven.botengine.BotEnvironment;
+import haven.botengine.GroovyScriptList;
 import haven.botengine.ScriptRunner;
 import haven.botengine.discord.Discord;
 import haven.JOGLPanel;
 import haven.commands.RunScript;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static haven.JOGLPanel.discordjava;
@@ -370,6 +374,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/Bots/TarKilnEmptierBot");
 		makeLocal("paginae/nightdawg/Bots/FishingBot");
 		makeLocal("paginae/nightdawg/Bots/TrellisPlantDestroyerBot");
+        makeLocal("paginae/nightdawg/Bots/GroovyBots");
 
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleAnimalDangerRadii");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleCritterCircleAuras");
@@ -607,6 +612,21 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		change(null);
 	}
     }
+	public List<String> getAllScripts() {
+		Path testFilePath = Paths.get("scripts");
+		File[] listOfFiles = testFilePath.toFile().listFiles();
+		List<String> files = new ArrayList<>();
+
+		for (File file : listOfFiles) {
+			if (file.isFile() && file.getName().endsWith(".groovy")) {
+				files.add(file.getName().replace(".groovy", ""));
+			}
+		}
+		if (!files.isEmpty()) {
+			return files;
+		}
+		return List.of();
+	}
 
 	public void use(String[] ad) {
 		GameUI gui = ui.gui;
@@ -647,6 +667,15 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 						gui.OrcaFinder = null;
 						gui.OrcaFinderThread = null;
 					}
+				}
+			} else if (ad[2].equals("GroovyBots")) {
+				List<String> allscr = getAllScripts();
+				if(gui.groovyScriptList.visible){
+					ui.gui.groovyScriptList.hide();
+					ui.gui.groovyScriptList.clearConds();
+				} else {
+					ui.gui.groovyScriptList.addConds(allscr);
+					ui.gui.groovyScriptList.show();
 				}
 			} else if (ad[2].equals("AutoTunneler")) {
 				if (gui.tunnelerBot == null && gui.tunnelerBotThread == null) {

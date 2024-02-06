@@ -1,1 +1,2 @@
-player.discordSendScreen("res/saved.png");
+
+log.info "lula"
