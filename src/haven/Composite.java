@@ -179,6 +179,7 @@ public class Composite extends Drawable implements EquipTarget {
     public void chposes(Collection<ResData> poses, boolean interp) {
 	if(tposes != null)
 	    tposes = null;
+	oldposes = poses;
 	nposes = poses;
 	nposesold = !interp;
     }
