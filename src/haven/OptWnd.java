@@ -1261,6 +1261,7 @@ public class OptWnd extends Window {
 					"\n$col[218,163,0]{Case 2:} $col[185,185,185]{If you are in combat with Animals, it will try to attack the closest not-already-aggroed player. If none is found, try to attack the closest animal. Once this happens, you're back to Case 1.}" +
 					"\n\n$col[218,163,0]{Note:} $col[185,185,185]{Party members will never be attacked by this button. Village or Realm members will not be attacked unless you have them marked as $col[185,0,0]{Red} in your Kin List.}", new Color(255, 0, 0,255), GameUI.kb_aggroNearestTargetButton, y+6);
 			y = addbtnImproved(cont, "Aggro Nearest Player", "Selects the nearest non-aggroed Player to attack.", new Color(255, 0, 0,255), GameUI.kb_aggroNearestPlayerButton, y+6);
+			//y = addbtnImproved(cont, "Aggro Nearest Player To Cursor", "Selects the nearest non-aggroed/aggroed Player to attack by proximity radius.", new Color(255, 0, 0,255), GameUI.kb_aggroNearestProximityPlayerButton, y);
 
 			//
 			y = addbtnImproved(cont, "Aggro all Non-Friendly players.", "", new Color(255, 0, 0,255), GameUI.kb_aggroAllNonFriendlyPlayers, y);
@@ -1990,6 +1991,7 @@ public class OptWnd extends Window {
 	public static CheckBox markCurrentCombatTargetCheckBox;
 	public static HSlider combatUITopPanelHeightSlider;
 	public static HSlider combatUIBottomPanelHeightSlider;
+	public static HSlider proximityradiusSLIDER;
 	public static CheckBox toggleGobDamageInfoCheckBox;
 	public static CheckBox toggleGobDamageWoundInfoCheckBox;
 	public static CheckBox toggleGobDamageArmorInfoCheckBox;
@@ -1998,6 +2000,7 @@ public class OptWnd extends Window {
 	public static CheckBox partyMembersCirclesCheckBox;
 	public static CheckBox aggroedEnemiesCirclesCheckBox;
 	public static CheckBox drawChaseVectorsCheckBox;
+	public static CheckBox proximityaggroPVPCheckBox;
 	public static Button damageInfoClearButton;
 	public class NDCombatSettingsPanel extends Panel {
 		public NDCombatSettingsPanel(Panel back) {
@@ -2148,7 +2151,22 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 12));
-
+			prev = add(proximityaggroPVPCheckBox = new CheckBox("Aggro players in proximity to the mouse cursor") {
+				{a = Utils.getprefb("ProximityAggroPVP", false);}
+				public void set(boolean val) {
+					Utils.setprefb("ProximityAggroPVP", val);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 2));
+			prev = add(proximityradiusSLIDER = new HSlider(UI.scale(200), 10, 480, Utils.getprefi("ProximityPvPSlider", 100)) {
+				public void changed() {
+					Utils.setprefi("ProximityPvPSlider", val);
+				}
+				@Override
+				public Object tooltip(Coord c0, Widget prev) {
+					return Text.render("Proximity radius : " + val + " pixels").tex();
+				}
+			}, prev.pos("bl").adds(0, 2));
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForCombatSettingsStuff();
 			pack();

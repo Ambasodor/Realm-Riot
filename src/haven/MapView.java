@@ -47,13 +47,18 @@ import java.util.stream.Collectors;
 
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
+import static haven.OptWnd.proximityaggroPVPCheckBox;
+import static haven.OptWnd.proximityradiusSLIDER;
+import static haven.automated.AUtils.rightClick;
 
 public class MapView extends PView implements DTarget, Console.Directory, PFListener {
     public static boolean clickdb = false;
 	public long plgob = -1;
 	public long plgobid;
+	//public boolean prox = false;
 	public Coord2d pllastcc;
     public Coord2d cc;
+	public Coord2d mpos;
     public final Glob glob;
     private int view = 2;
     private Collection<Delayed> delayed = new LinkedList<Delayed>();
@@ -62,6 +67,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     public Camera camera = restorecam();
     private Loader.Future<Plob> placing = null;
     private Grabber grab;
+	public Coord2d mapclick;
 	public Thread pfthread;
     private Selector selection;
     private Coord3f camoff = new Coord3f(Coord3f.o);
@@ -2230,14 +2236,13 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 
     public abstract class Hittest implements DelayedB {
 	private final Coord pc;
-	private Coord2d mapcl;
+	public Coord2d mapcl;
 	private ClickData objcl;
 	private int dfl = 0;
 	
 	public Hittest(Coord c) {
 	    pc = c;
 	}
-	
 	public void run() {
 	    Environment env = ui.env;
 	    Render out = env.render();
@@ -2271,7 +2276,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		}
 	    }
 	}
-	
 	protected abstract void hit(Coord pc, Coord2d mc, ClickData inf);
 	protected void nohit(Coord pc) {}
     }
@@ -2279,7 +2283,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     private class Click extends Hittest {
 	int clickb;
 	
-	private Click(Coord c, int b) {
+	public Click(Coord c, int b) {
 	    super(c);
 	    clickb = b;
 	}
@@ -2302,6 +2306,31 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 				if (gob != null) {
 					pllastcc = gob.rc;
 				}
+			}
+		}
+		Resource curs = ui.root.getcurs(c);
+		mpos = mc;
+
+
+		if (clickb == 1 && curs.name.equals("gfx/hud/curs/atk") && proximityaggroPVPCheckBox.a) {
+			boolean isAttack = curs.name.equals("gfx/hud/curs/atk");
+			List<Gob> gobs = Arrays.stream(glob.oc.getallgobs()).collect(Collectors.toList());
+			gobs.stream().filter(Gob::isplayer).collect(Collectors.toList()).forEach(gobs::remove);
+			double offDist = proximityradiusSLIDER.val;
+			gobs.stream().filter(gob -> gob.rc.dist(mc) > offDist).collect(Collectors.toList()).forEach(gobs::remove);
+			gobs = gobs.stream().filter(gob -> {
+				if (isAttack && proximityaggroPVPCheckBox.a && gob.getres().name.contains("gfx/borka/body")) {
+					return (true);
+				} else {
+					return (false);
+				}
+			}).collect(Collectors.toList());
+			gobs.sort(Comparator.comparingDouble(o -> o.rc.dist(mc)));
+			if (!gobs.isEmpty()) {
+				Gob target = gobs.get(0);
+				wdgmsg("click", target.rc.floor(OCache.posres), target.rc.floor(posres), 1, 0, 0, (int) target.id, target.rc.floor(posres), 0, -1);
+				pllastcc = target.rc;
+				return;
 			}
 		}
 	    Object[] args = {pc, mc.floor(posres), clickb, modflags};
@@ -2457,10 +2486,10 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	}
 	return(true);
     }
-    
     public void mousemove(Coord c) {
-	if(grab != null)
-	    grab.mmousemove(c);
+	if(grab != null) {
+		grab.mmousemove(c);
+	}
 	Loader.Future<Plob> placing_l = this.placing;
 	if(camdrag != null) {
 	    ((Camera)camera).drag(c);
@@ -2469,7 +2498,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	    if((placing.lastmc == null) || !placing.lastmc.equals(c)) {
 		placing.new Adjust(c, ui.modflags()).run();
 	    }
-	}  else if (ui.modshift && ui.modctrl) {
+	} else if (ui.modshift && ui.modctrl) {
 		long now = System.currentTimeMillis();
 		if ((now - lastmmhittest > 500 || lasthittestc.dist(c) > tilesz.x) && ui.gui.hand.isEmpty()) {
 			lastmmhittest = now;
@@ -2741,7 +2770,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	    }.run();
 	    return(true);
 	}
-
 	public void mmousemove(Coord cc) {
 	    if(mv) {
 		new Maptest(cc) {

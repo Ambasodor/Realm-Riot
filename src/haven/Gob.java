@@ -56,6 +56,7 @@ import java.util.stream.Collectors;
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
 	public static Set<Long> listHighlighted = new HashSet<>();
     public Coord2d rc;
+	public Coord sc;
     public double a;
     public boolean virtual = false;
     int clprio = 0;

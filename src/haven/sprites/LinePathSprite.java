@@ -48,7 +48,7 @@ public class LinePathSprite extends Sprite implements PView.Render2D {
                                     Coord TargetCoord = mv.screenxf(mc).round2();
                                     Color chaserColor = MAINCOLOR;
                                     g.chcolor(MAINCOLOR);
-                                    g.line(ChaserCoord, TargetCoord, 3);
+                                    g.line(ChaserCoord, TargetCoord, 1.5);
                                 }
                                 if (gob.getres().name.equals("gfx/terobjs/vehicle/snekkja")) {
                                     for (Gob occupant : gob.occupants) {
@@ -62,7 +62,7 @@ public class LinePathSprite extends Sprite implements PView.Render2D {
                                                 Coord TargetCoord = mv.screenxf(mc).round2();
                                                 Color chaserColor = MAINCOLOR;
                                                 g.chcolor(MAINCOLOR);
-                                                g.line(ChaserCoord, TargetCoord, 3);
+                                                g.line(ChaserCoord, TargetCoord, 1.5);
                                             }
                                         }
                                     }
@@ -79,7 +79,7 @@ public class LinePathSprite extends Sprite implements PView.Render2D {
                                                 Coord TargetCoord = mv.screenxf(mc).round2();
                                                 Color chaserColor = MAINCOLOR;
                                                 g.chcolor(MAINCOLOR);
-                                                g.line(ChaserCoord, TargetCoord, 3);
+                                                g.line(ChaserCoord, TargetCoord, 1.5);
                                             }
                                         }
                                     }
@@ -96,7 +96,7 @@ public class LinePathSprite extends Sprite implements PView.Render2D {
                                                 Coord TargetCoord = mv.screenxf(mc).round2();
                                                 Color chaserColor = MAINCOLOR;
                                                 g.chcolor(MAINCOLOR);
-                                                g.line(ChaserCoord, TargetCoord, 3);
+                                                g.line(ChaserCoord, TargetCoord, 1.5);
                                             }
                                         }
                                     }
@@ -113,7 +113,7 @@ public class LinePathSprite extends Sprite implements PView.Render2D {
                                                 Coord TargetCoord = mv.screenxf(mc).round2();
                                                 Color chaserColor = MAINCOLOR;
                                                 g.chcolor(MAINCOLOR);
-                                                g.line(ChaserCoord, TargetCoord, 3);
+                                                g.line(ChaserCoord, TargetCoord, 1.5);
                                             }
                                         }
                                     }
