@@ -83,7 +83,14 @@ public class Skeleton {
 	    this.irang = irang;
 	}
     }
-    
+	public interface HasPose {
+		public Pose getpose();
+	}
+	public static Pose getpose(Object owner) {
+		if(owner instanceof HasPose)
+			return(((HasPose)owner).getpose());
+		return(null);
+	}
     private static float[] rotasq(float[] q, float[] axis, float angle) {
 	float m = (float)Math.sin(angle / 2.0);
 	q[0] = (float)Math.cos(angle / 2.0);

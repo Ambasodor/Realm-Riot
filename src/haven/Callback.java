@@ -26,7 +26,6 @@
 
 package haven;
 
-public interface Future<T> {
-    public T get();
-    public boolean done();
+public interface Callback<T> {
+    public void done(T val);
 }
