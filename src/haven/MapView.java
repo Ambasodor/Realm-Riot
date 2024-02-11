@@ -26,12 +26,22 @@
 
 package haven;
 
+import static haven.MCache.cmaps;
+import static haven.MCache.tilesz;
+import static haven.OCache.posres;
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.util.*;
+import java.util.function.*;
+import java.lang.ref.*;
+import java.lang.reflect.*;
+import haven.render.*;
 import haven.MCache.OverlayInfo;
+import haven.render.sl.Uniform;
 import haven.automated.MiningSafetyAssistant;
 import haven.automated.helpers.AreaSelectCallback;
 import haven.automated.pathfinder.PFListener;
 import haven.automated.pathfinder.Pathfinder;
-import haven.render.*;
 import haven.render.sl.Type;
 import haven.render.sl.Uniform;
 
@@ -132,11 +142,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	}
 
 	public void snap(Direction dir) {}
-	
+
 	public void resized() {
 	    float field = 0.5f;
 	    float aspect = ((float)sz.y) / ((float)sz.x);
-	    proj = Projection.frustum(-field, field, -aspect * field, aspect * field, 1, 5000); // ND: Changed this from 2000 to 5000. This is the max free cam distance, before it turns black.
+	    proj = Projection.frustum(-field, field, -aspect * field, aspect * field, 1, 2000);
 	}
 
 	public void apply(Pipe p) {
@@ -801,7 +811,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			placing.get().drawableUpdated();
 		}
 	}
-    
+
     protected void envdispose() {
 	if(smap != null) {
 	    smap.dispose(); smap = null;
@@ -2010,7 +2020,10 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	partyCircles.update();
 	Loader.Future<Plob> placing = this.placing;
 	if((placing != null) && placing.done()) {
-		placing.get().ctick(dt);
+	    Plob ob = placing.get();
+	    synchronized(ob) {
+		ob.ctick(dt);
+	    }
 	}
     }
     
@@ -2063,7 +2076,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	RenderTree.Slot slot;
 
 	private Plob(Indir<Resource> res, Message sdt) {
-	    super(MapView.this.glob, MapView.this.cc);
+	    super(MapView.this.glob, Coord2d.of(getcc()));
 	    setattr(new ResDrawable(this, res, sdt));
 	}
 
@@ -2265,11 +2278,10 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	    if(done) {
 		synchronized(ui) {
 		    if(mapcl != null) {
-			if(objcl == null) {
-				hit(pc, mapcl, null);
-			} else {
-				hit(pc, mapcl, objcl);
-			}
+			if(objcl == null)
+			    hit(pc, mapcl, null);
+			else
+			    hit(pc, mapcl, objcl);
 		    } else {
 			nohit(pc);
 		    }
@@ -2283,7 +2295,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     private class Click extends Hittest {
 	int clickb;
 	
-	public Click(Coord c, int b) {
+	private Click(Coord c, int b) {
 	    super(c);
 	    clickb = b;
 	}

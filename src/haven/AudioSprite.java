@@ -117,6 +117,7 @@ public class AudioSprite {
     public static class RepeatSprite extends Sprite implements Sprite.CDel {
 	private ActAudio.PosClip clip;
 	private final Audio.Clip end;
+	private final Collection<RenderTree.Slot> slots = new ArrayList<>(1);
 
 	public RepeatSprite(Owner owner, Resource res, Audio.Clip beg, List<Audio.Clip> clips, Audio.Clip end) {
 	    super(owner, res);
@@ -135,9 +136,18 @@ public class AudioSprite {
 	    this.clip = new ActAudio.PosClip(rep);
 	}
 
-	public void added(RenderTree.Slot slot) {
+	private void parts(RenderTree.Slot slot) {
 	    if(clip != null)
 		slot.add(clip);
+	}
+
+	public void added(RenderTree.Slot slot) {
+	    parts(slot);
+	    slots.add(slot);
+	}
+
+	public void removed(RenderTree.Slot slot) {
+	    slots.remove(slot);
 	}
 
 	public boolean tick(double dt) {
@@ -152,6 +162,7 @@ public class AudioSprite {
 			    RepeatSprite.this.clip = null;
 			}
 		    });
+		RUtils.readd(slots, this::parts, () -> {});
 	    } else {
 		clip = null;
 	    }

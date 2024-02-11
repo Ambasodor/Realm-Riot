@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
-public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
+public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget {
 	public static Set<Long> listHighlighted = new HashSet<>();
     public Coord2d rc;
 	public Coord sc;
@@ -353,7 +353,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public final Indir<Resource> res;
 	public MessageBuf sdt;
 	public Sprite spr;
-	public boolean delign = false;
+	public boolean delign = false, old = false;
 	private Collection<RenderTree.Slot> slots = null;
 	private boolean added = false;
 
@@ -380,35 +380,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    this.sdt = null;
 	    this.spr = spr;
 	}
-
-	private void init() {
-	    if(spr == null) {
-			//Minesweeper data
-//			if(res != null && res.get().name.contains("gfx/fx/cavewarn")){
-//				try{
-//					System.out.println(this.gob.rc + " cavein: " + sdt.peekUint8());
-//				} catch (Exception e){
-//
-//				}
-//			}
-//			if(this.gob != null) {
-//				if (gob.getres() != null && res.get().name.contains("mineout")) {
-//					System.out.println(gob.getres().name + " - " + gob.rc + " - " + res.get().name + System.currentTimeMillis());
-//				}
-//			}
-//			if(this.gob != null){
-//				if(gob.getres() == null && res.get().name.contains("mineout")) {
-//					System.out.println(gob.getClass().getName() + " - " + gob.virtual + gob.rc + System.currentTimeMillis());
-//				}
-//			}
-		spr = Sprite.create(gob, res.get(), sdt);
-		if(added && (spr instanceof SetupMod)) {
-		    gob.setupmods.add((SetupMod)spr);
-		}
-	    }
-	    if(slots == null)
-		RUtils.multiadd(gob.slots, this);
-	}
+        private void init() {
+            if(spr == null) {
+                if(added && (spr instanceof SetupMod)) {
+                    gob.setupmods.add((SetupMod)spr);
+                }
+                spr = Sprite.create(gob, res.get(), sdt);
+                if(old)
+                    spr.age();
+                if(added && (spr instanceof SetupMod))
+                    gob.setupmods.add((SetupMod)spr);
+            }
+            if(slots == null)
+                RUtils.multiadd(gob.slots, this);
+        }
 
 	private void add0() {
 	    if(added)
@@ -437,11 +422,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    }
 	    remove0();
 	    gob.ols.remove(this);
-		gob.olRemoved();
+        gob.olRemoved();
 	}
 
 	public void remove() {
 	    remove(true);
+	}
+
+	protected void removed() {
+	}
+
+	public boolean tick(double dt) {
+	    if(spr == null)
+		return(false);
+	    return(spr.tick(dt));
 	}
 
 	public void added(RenderTree.Slot slot) {
@@ -789,7 +783,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		    ol.init();
 		} catch(Loading e) {}
 	    } else {
-		boolean done = ol.spr.tick(dt);
+		boolean done = ol.tick(dt);
 		if((!ol.delign || (ol.spr instanceof Sprite.CDel)) && done) {
 		    ol.remove0();
 		    i.remove();
@@ -1308,13 +1302,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	Drawable d = getattr(Drawable.class);
 	if(d != null)
 	    return(d.getres());
-	return(null);
-    }
-
-    public Skeleton.Pose getpose() {
-	Drawable d = getattr(Drawable.class);
-	if(d != null)
-	    return(d.getpose());
 	return(null);
     }
 

@@ -28,7 +28,7 @@ package haven;
 
 import haven.render.*;
 
-public abstract class Drawable extends GAttrib implements Skeleton.HasPose, RenderTree.Node {
+public abstract class Drawable extends GAttrib implements RenderTree.Node {
     public Drawable(Gob gob) {
 	super(gob);
     }
@@ -76,19 +76,16 @@ public abstract class Drawable extends GAttrib implements Skeleton.HasPose, Rend
 			placer = new Gob.BasePlace(gob.glob.map, getsurf((String)desc[1]), res, id);
 			break;
 		    }
-
-			// TODO: ND: this "line" crap needs to be fixed somehow. I have no clue what's breaking it in the first place. Same thing is happening in trollex's client if he adds it.
-
-//		    case "line": {
-//			String id = "";
-//			Coord2d k = Coord2d.of(1, 0);
-//			if(desc.length > 2)
-//			    id = (String)desc[2];
-//			if(desc.length > 3)
-//			    k = k.rot(((Number)desc[3]).doubleValue());
-//			placer = new Gob.LinePlace(gob.glob.map, getsurf((String)desc[1]), res, id, k);
-//			break;
-//		    }
+		    case "line": {
+			String id = "";
+			Coord2d k = Coord2d.of(1, 0);
+			if(desc.length > 2)
+			    id = (String)desc[2];
+			if(desc.length > 3)
+			    k = k.rot(((Number)desc[3]).doubleValue());
+			placer = new Gob.LinePlace(gob.glob.map, getsurf((String)desc[1]), res, id, k);
+			break;
+		    }
 		    case "plane": {
 			String id = "";
 			if(desc.length > 2)
@@ -115,17 +112,12 @@ public abstract class Drawable extends GAttrib implements Skeleton.HasPose, Rend
 
     public void gtick(Render g) {
     }
+    public String resId() {
+        try {
+            Resource res = getres();
+            return res == null ? null : res.name;
 
-    public Skeleton.Pose getpose() {
-	return(null);
+        } catch (Loading ignored) {}
+        return null;
     }
-
-	public String resId() {
-		try {
-			Resource res = getres();
-			return res == null ? null : res.name;
-
-		} catch (Loading ignored) {}
-		return null;
-	}
 }
