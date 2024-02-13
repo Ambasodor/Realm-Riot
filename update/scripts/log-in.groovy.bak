@@ -1,0 +1,9 @@
+account = "X"
+password = "X"
+characters = ["leechbot"]
+while (true) {
+    player.login(account, password, characters[0])
+    sleep(5000)
+    player.discordSay("${characters} Loginned")
+    return false
+}
