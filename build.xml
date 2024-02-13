@@ -241,7 +241,7 @@
   </target>
 
   <target name="prep-update">
-    <copy todir="update">
+    <copy todir="update/rgameupdate">
       <fileset dir="lib">
         <include name="builtin-res.jar"/>
         <include name="commons-collections4-4.1.jar"/>
@@ -279,34 +279,34 @@
         <include name="haven-config.properties"/>
       </fileset>
     </copy>
-    <copy todir="update/Alarms">
+    <copy todir="update/rgameupdate/Alarms">
       <fileset dir="build/Alarms/"/>
     </copy>
-    <copy todir="update/scripts">
+    <copy todir="update/rgameupdate/scripts">
       <fileset dir="scripts/"/>
     </copy>
-    <copy todir="update/music">
+    <copy todir="update/rgameupdate/music">
       <fileset dir="build/music"/>
     </copy>
-    <copy todir="update/Map_Icons_Presets">
+    <copy todir="update/rgameupdate/Map_Icons_Presets">
       <fileset dir="build/Map_Icons_Presets/"/>
     </copy>
-    <copy todir="update/res">
+    <copy todir="update/rgameupdate/res">
       <fileset dir="build/res/"/>
     </copy>
-    <delete file="update/has-jogl"/>
-    <delete file="update/has-jogl"/>
+    <delete file="update/rgameupdate/has-jogl"/>
+    <delete file="update/rgameupdate/has-jogl"/>
   </target>
 
   <target name="update" depends="prep-update">
     <exec executable="git" outputproperty="gitrev" failifexecutionfails="false">
       <arg line="rev-parse HEAD"/>
     </exec>
-    <java jar="update/hafen-updater.jar" fork="true">
+    <java jar="update/rgameupdate/hafen-updater.jar" fork="true">
       <arg value="hash"/>
       <arg value="update/"/>
       <arg value="${gitrev}"/>
     </java>
-    <move file="ver" todir="update"/>
+    <move file="ver" todir="update/rgameupdate/"/>
   </target>
 </project>
