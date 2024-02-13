@@ -976,8 +976,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		} catch (ArrayIndexOutOfBoundsException ignored){}
 	}
 	private void addDmg() {
-		damage = new GobDamageInfo(this,glob.sess.ui.gui);
-		setattr(GobDamageInfo.class, damage);
+		if (glob.sess.ui.gui != null) {
+			damage = new GobDamageInfo(this, glob.sess.ui.gui);
+			setattr(GobDamageInfo.class, damage);
+		}
 	}
 
 	public void clearDmg() {
