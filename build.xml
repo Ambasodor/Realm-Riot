@@ -277,6 +277,7 @@
         <include name="hafen.jar"/>
         <include name="l10n.jar"/>
         <include name="haven-config.properties"/>
+        <include name="commands.txt"/>
       </fileset>
     </copy>
     <copy todir="update/Alarms">
