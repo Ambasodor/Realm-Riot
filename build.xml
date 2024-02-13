@@ -218,8 +218,6 @@
       <fileset dir="music" includes="**"/>
     </copy>
     <copy file="etc/ansgar-config.properties" tofile="build/haven-config.properties" />
-    <copy file="static_data.db" todir="build"/>
-    <copy file="food_recipes.db" todir="build"/>
   </target>
 
   <target name="profile" depends="jars">
@@ -240,5 +238,75 @@
     <copy todir="build/res/" >
       <fileset dir="sounds/" includes="**"/>
     </copy>
+  </target>
+
+  <target name="prep-update">
+    <copy todir="update">
+      <fileset dir="lib">
+        <include name="builtin-res.jar"/>
+        <include name="commons-collections4-4.1.jar"/>
+        <include name="gluegen-rt.jar"/>
+        <include name="groovy-3.0.3.jar"/>
+        <include name="hafen-res.jar"/>
+        <include name="jackson-annotations-2.10.1.jar"/>
+        <include name="jackson-core-2.10.1.jar"/>
+        <include name="jackson-databind-2.10.1.jar"/>
+        <include name="JDA-4.1.1_138.jar"/>
+        <include name="jglob.jar"/>
+        <include name="jnlp.jar"/>
+        <include name="jogl.jar"/>
+        <include name="logback-classic-1.2.3.jar"/>
+        <include name="logback-core-1.2.3.jar"/>
+        <include name="nv-websocket-client-2.9.jar"/>
+        <include name="okhttp-3.13.0.jar"/>
+        <include name="okio-1.17.2.jar"/>
+        <include name="rxjava-1.1.5.jar"/>
+        <include name="rxjava-1.1.5-javadoc.jar"/>
+        <include name="slf4j-api-1.7.25.jar"/>
+        <include name="sqlite-jdbc-3.42.0.0.jar"/>
+        <include name="trove4j-3.0.3.jar"/>
+      </fileset>
+      <fileset dir="lib/jogl-natives/"/>
+      <fileset dir="lib/ext/jogl/"/>
+      <fileset dir="lib/ext/lwjgl">
+        <include name="lwjgl-awt.jar"/>
+        <include name="lwjgl-fat.jar"/>
+        <include name="lwjgl-opengl-fat.jar"/>
+      </fileset>
+      <fileset dir="build">
+        <include name="hafen.jar"/>
+        <include name="l10n.jar"/>
+        <include name="haven-config.properties"/>
+      </fileset>
+    </copy>
+    <copy todir="update/Alarms">
+      <fileset dir="build/Alarms/"/>
+    </copy>
+    <copy todir="update/scripts">
+      <fileset dir="scripts/"/>
+    </copy>
+    <copy todir="update/music">
+      <fileset dir="build/music"/>
+    </copy>
+    <copy todir="update/Map_Icons_Presets">
+      <fileset dir="build/Map_Icons_Presets/"/>
+    </copy>
+    <copy todir="update/res">
+      <fileset dir="build/res/"/>
+    </copy>
+    <delete file="update/has-jogl"/>
+    <delete file="update/has-jogl"/>
+  </target>
+
+  <target name="update" depends="prep-update">
+    <exec executable="git" outputproperty="gitrev" failifexecutionfails="false">
+      <arg line="rev-parse HEAD"/>
+    </exec>
+    <java jar="update/hafen-updater.jar" fork="true">
+      <arg value="hash"/>
+      <arg value="update/"/>
+      <arg value="${gitrev}"/>
+    </java>
+    <move file="ver" todir="update"/>
   </target>
 </project>
