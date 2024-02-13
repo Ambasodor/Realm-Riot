@@ -4,13 +4,15 @@ import haven.render.Homo3D;
 import haven.render.Pipe;
 import haven.render.RenderTree;
 
+import static haven.GobDamageInfo.clearAllDamage;
+import static haven.GobDamageInfo.clearPlayerDamage;
+
 public abstract class GobInfo extends GAttrib implements RenderTree.Node, PView.Render2D {
     protected Tex tex;
     public Coord3f pos = new Coord3f(0, 0, 1);
     protected final Object texLock = new Object();
     protected Pair<Double, Double> center = new Pair<>(0.5, 1.0);
     protected boolean dirty = true;
-
     public GobInfo(Gob owner) {
         super(owner);
     }

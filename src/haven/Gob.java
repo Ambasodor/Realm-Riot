@@ -52,6 +52,9 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static haven.GobDamageInfo.clearDamage;
+import static haven.GobDamageInfo.gobDamage;
+
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget {
 	public static Set<Long> listHighlighted = new HashSet<>();
@@ -947,23 +950,33 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private void processDmg(MessageBuf msg) {
-		try {
-			msg.rewind();
-			int v = msg.int32();
-			msg.uint8();
-			int c = msg.uint16();
+			try {
+				msg.rewind();
+				int v = msg.int32();
+				msg.uint8();
+				int c = msg.uint16();
 
-			if(damage == null) {
-				addDmg();
+				if (damage == null) {
+					addDmg();
+				}
+				damage.update(c, v);
+			} catch (Exception ignored) {
+				ignored.printStackTrace();
 			}
-			damage.update(c, v);
-		} catch (Exception ignored) {
-			ignored.printStackTrace();
-		}
 	}
-
+	public static void clearAllDamage(GameUI gui) {
+		try {
+			ArrayList<Long> gobIds = new ArrayList<>(gobDamage.keySet());
+			for (Long id : gobIds) {
+				if (id == null) {
+					continue;
+				}
+				clearDamage(gui.ui.sess.glob.oc.getgob(id), id);
+			}
+		} catch (ArrayIndexOutOfBoundsException ignored){}
+	}
 	private void addDmg() {
-		damage = new GobDamageInfo(this);
+		damage = new GobDamageInfo(this,glob.sess.ui.gui);
 		setattr(GobDamageInfo.class, damage);
 	}
 

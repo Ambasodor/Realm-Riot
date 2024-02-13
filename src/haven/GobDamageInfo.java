@@ -10,6 +10,7 @@ public class GobDamageInfo extends GobInfo {
     private static final int SHP = 61455;
     private static final int HHP = 64527;
     private static final int ARM = 36751;
+    public GameUI gui;
     private static final int PAD = UI.scale(3);
 
     public static Color BG = new Color(0, 0, 0, 0);
@@ -21,7 +22,7 @@ public class GobDamageInfo extends GobInfo {
         else BG = new Color(0, 0, 0, 0);
     }
 
-    private static final Map<Long, DamageVO> gobDamage = new LinkedHashMap<Long, DamageVO>() {
+    public static final Map<Long, DamageVO> gobDamage = new LinkedHashMap<Long, DamageVO>() {
         @Override
         protected boolean removeEldestEntry(Map.Entry eldest) {
             return size() > 50;
@@ -30,21 +31,27 @@ public class GobDamageInfo extends GobInfo {
 
     private final DamageVO damage;
 
-    public GobDamageInfo(Gob owner) {
+    public GobDamageInfo(Gob owner, GameUI gui) {
         super(owner);
-        up(15); // ND: Default was 12.0 // ND: For each 3.4 added here, add 1.0 at "b:" in the pair below. It's probably not 100% correct, but it's super close.
-        center = new Pair<>(0.5, 1.0); // Default was 0.5, 1.0
-        if(gobDamage.containsKey(gob.id)) {
-            damage = gobDamage.get(gob.id);
-        } else {
-            damage = new DamageVO();
-            gobDamage.put(gob.id, damage);
-        }
+        this.gui = gui;
+        up(18); // ND: Default was 12.0 // ND: For each 3.4 added here, add 1.0 at "b:" in the pair below. It's probably not 100% correct, but it's super close.
+        center = new Pair<>(0.5, 3.0); // Default was 0.5, 1.0
+            if (gobDamage.containsKey(gob.id)) {
+                damage = gobDamage.get(gob.id);
+            } else {
+                damage = new DamageVO();
+                gobDamage.put(gob.id, damage);
+            }
     }
 
     @Override
     protected boolean enabled() {
-        return OptWnd.toggleGobDamageInfoCheckBox.a;
+        if (gui != null && gui.fv != null && gui.fv.current != null) {
+            return OptWnd.toggleGobDamageInfoCheckBox.a;
+        } else {
+            clearAllDamage(gui);
+        }
+        return false;
     }
 
     @Override
@@ -71,28 +78,28 @@ public class GobDamageInfo extends GobInfo {
     public void update(int c, int v) {
 //	Debug.log.println(String.format("Number %d, c: %d", v, c));
         //35071 - Initiative
-        if(c == SHP) {
-            damage.shp += v;
-            update();
-        } else if(c == HHP) {
-            damage.hhp += v;
-            update();
-        } else if(c == ARM) {
-            damage.armor += v;
-            update();
-        }
+            if (c == SHP) {
+                damage.shp += v;
+                update();
+            } else if (c == HHP) {
+                damage.hhp += v;
+                update();
+            } else if (c == ARM) {
+                damage.armor += v;
+                update();
+            }
     }
 
     public void update() {
-        gobDamage.put(gob.id, damage);
-        clean();
+            gobDamage.put(gob.id, damage);
+            clean();
     }
 
     public static boolean has(Gob gob) {
         return gobDamage.containsKey(gob.id);
     }
 
-    private static void clearDamage(Gob gob, long id) {
+    public static void clearDamage(Gob gob, long id) {
         if(gob != null) {
             gob.clearDmg();
         }
