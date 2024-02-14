@@ -2324,7 +2324,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		mpos = mc;
 
 
-		if (clickb == 1 && curs.name.equals("gfx/hud/curs/atk") && proximityaggroPVPCheckBox.a) {
+		if (clickb == 1 && curs != null && curs.name.equals("gfx/hud/curs/atk") && proximityaggroPVPCheckBox.a) {
 			boolean isAttack = curs.name.equals("gfx/hud/curs/atk");
 			List<Gob> gobs = Arrays.stream(glob.oc.getallgobs()).collect(Collectors.toList());
 			gobs.stream().filter(Gob::isplayer).collect(Collectors.toList()).forEach(gobs::remove);

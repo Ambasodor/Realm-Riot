@@ -28,7 +28,7 @@ def unstuck(def coords, def stuckCoords, def toRandom){
 def waypointWalker(def points) {
 	def absolute
 	def stuckCoords
-	def toRandom
+	def toRandom = 0
 	def start = player.getPlayerCoords()
 	if (start == null){
 		start = player.getPlayerCoords()
@@ -49,11 +49,11 @@ def waypointWalker(def points) {
 			findTruffle()
 			absolute = player.SdistanceBetweenCoords(newpos)
 			player.moveToNoPF(newpos)
-			log.info("distance left - ${a}")
+			log.info("distance left - ${absolute}")
 			sleep(100)
 			stuckCoords = player.SdistanceBetweenCoords(newpos)
 			unstuck(absolute, stuckCoords, toRandom)
-			if (a == 0) {
+			if (absolute == 0) {
 				log.info("I'm on point.")
 				break
 			}
@@ -255,17 +255,17 @@ def SafeDistToPig(){
 	def distance
 	pig = player.isGob("pig")
 	distance = player.distanceTo(pig)
-	if (distance > 77){
+	if (distance > 99){
 		playercoord = player.getPlayerCoords()
 		def next = playercoord.add(0.0, 0.0)
 		def newpos = next
 		findTruffle()
 		player.moveToNoPF(newpos)
-		while (distance > 77){
+		while (distance > 99){
 			distance = player.distanceTo(pig)
 			findTruffle()
 			sleep(25)
-			if (distance < 60) break
+			if (distance < 88) break
 		}
 	}
 }
@@ -316,9 +316,9 @@ def gotoChest(def StartCoords, def calculatetruffles){
 	for (int n = 0; n < chests.size(); n++) {
 		TruffleInInventory = inventory.getItems("Black Truffles")
 		currentchest = chests[n]
-			player.moveTo(StartCoords)
-			player.moveTo(chests[n])
-			openChest(currentchest, calculatetruffles)
+		player.moveTo(StartCoords)
+		player.moveTo(chests[n])
+		openChest(currentchest, calculatetruffles)
 		if (TruffleInInventory.size == 0){
 			log.info("No truffles in inventory.")
 			break
@@ -376,21 +376,56 @@ def LogIn(){
 	sleep(4000)
 }
 
+def GoOutHouse(){
+	def cupb = []
+	logcabinet = player.findObjects("logcabin-door")
+	player.RightClickGobNoWait(logcabinet[0])
+	cupb = player.findObjects("cupboard")
+	if (!cupb.isEmpty()){
+		while (!cupb.isEmpty()){
+			player.RightClickGobNoWait(logcabinet[0])
+			cupb = player.findObjects("cupboard")
+			sleep(200)
+			if (cupb.isEmpty()) break
+		}
+	}
+}
+
+def GoInHouseAndPut() {
+	def cupb = []
+	logcabinet = player.findObjects("logcabin")
+	player.UseDoor(logcabinet)
+	cupb = player.findObjects("cupboard")
+	if (cupb.isEmpty()) {
+		while (cupb.isEmpty()) {
+			player.UseDoor(logcabinet)
+			cupb = player.findObjects("cupboard")
+			sleep(200)
+			if (!cupb.isEmpty()) break
+		}
+	}
+}
+
 def start(){
-	def coords = [[8.0, -4.0],[0, -11.0],[2.0, -3.0],[-2.0, -5.0],[0.0,-32.0],[2.0, -3.0],[0.0,-22.0],[-2.0, -2.0],[33.0, 0.0],[2.0, -2.0],[2.0,2.0],[21.0, 0.0],[2.0,-2.0],[2.0, 3.0],[6.0, 0.0],[3.0, -1.0],[17.0, 0.0],[1.0, -1.0],[1.0, 1.0],[10.0, 0.0],[0.0,-5.0],[2.0,-2.0],[-2.0,-22.0],[2.0,-2.0],[-2.0,-2.0],[0.0, -68.0],[-31.0, 0],[-2.0, -2.0],[-6.0, 2.0],[-62.0, 0.0],[-56.0, 0.0],[-17.0, 0.0],[-1.0,-1.0],[-4.0, 1.0],[-22.0, 0.0],[-18.0, 0.0],[-1.0, -1.0],[-9.0, 1.0],[-1.0,-1.0],[-43.0, 0.0],[-6.0, 1.0],[-14.0, 0.0],[-1.0, 1.0],[-6.0, -1.0],[1.0, 5.0],[0.0,50.0],[0.0, 38.0],[1.0, 1.0],[-1.0, 7.0],[32.0, -1.0],[47.0, 0.0],[2.0, -2.0],[2.0, 2.0],[66.0, 0.0],[21.0, 33.0],[13.0, 29.0],[8.0, 15.0]]
+	GoOutHouse()
+	def coords = [[0,-100],[0,-19],[-50,0],[0,119],[50,0]]
+	def coords1 = [[-17,0]]
 	def closegateCoords = [[0.0, -8.0]]
 	def opengateCoords = [[0.0, 10.0]]
 	def StartCoords
 	def NextCoords
 	def NewposCoords
+	waypointWalker(coords1)
 	//LogIn()
 	StartCoords = player.getPlayerCoords()
 	NextCoords = StartCoords.add(0.0, 0.0)
 	NewposCoords = NextCoords
-	opengate()
-	RopeOnCoursor()
-	ClickOnPig()
-	PutRopeInv()
+	//opengate() ##no gates in w15
+	//goouthouse()
+	//RopeOnCoursor()
+	//ClickOnPig()
+	//PutRopeInv()
+	/*
 	player.moveTo(NewposCoords)
 	player.moveToNoPF(NewposCoords)
 	a = player.SdistanceBetweenCoords(NewposCoords)
@@ -426,7 +461,10 @@ def start(){
 			break
 		}
 	}
+
+	 */
 	waypointWalker(coords)
+	/*
 	player.moveTo(NewposCoords)
 	player.moveToNoPF(NewposCoords)
 	a = player.SdistanceBetweenCoords(NewposCoords)
@@ -453,10 +491,10 @@ def start(){
 	}
 	closegate()
 	UnleashRope()
-	player.moveTo(NewposCoords)
+	 */
 	player.moveToNoPF(NewposCoords)
 	a = player.SdistanceBetweenCoords(NewposCoords)
-	while(a != 11){
+	while (a != 11){
 		a = player.SdistanceBetweenCoords(NewposCoords)
 		sleep(100)
 		player.moveToNoPF(NewposCoords)
@@ -464,7 +502,8 @@ def start(){
 			break
 		}
 	}
-	isChest(NewposCoords)
+	//isChest(NewposCoords)
+	GoInHouseAndPut()
 }
-
+player.setspeed(1)
 start()

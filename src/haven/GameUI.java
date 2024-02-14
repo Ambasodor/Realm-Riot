@@ -49,6 +49,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static haven.IMeter.characterSoftHealthPercent;
 import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory, UI.MessageWidget {
@@ -557,6 +558,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     protected void added() {
+		ui.gui = this;
 	resize(parent.sz);
 	ui.cons.out = new java.io.PrintWriter(new java.io.Writer() {
 		StringBuilder buf = new StringBuilder();
@@ -1222,10 +1224,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 	private static final Color red = new Color(168, 0, 0, 255);
 	private static final Color yellow = new Color(182, 165, 0, 255);
-	private void drawHealthMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
+
+	public void drawHealthMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
 		int w = msz.x;
 		int w1 = (int) Math.ceil(w * m.a);
-		int w2 = (int) Math.ceil(w * (IMeter.characterSoftHealthPercent/100));
+		int w2 = (int) Math.ceil(w * (characterSoftHealthPercent/100));
 		g.chcolor(yellow);
 		g.frect(sc, new Coord(w1, msz.y));
 		g.chcolor(red);
