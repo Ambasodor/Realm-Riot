@@ -978,7 +978,7 @@ public void closewindow(Window w){
     public void PickupGob(Gob gob){
         if (gob != null) {
             environment.getGui().map.wdgmsg(
-                    "click", new Coord(600, 600), gob.rc.floor(posres), 1, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1
+                    "click", new Coord(600, 600), gob.rc.floor(posres), 3, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1
             );
         }
     }
