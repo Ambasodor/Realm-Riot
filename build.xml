@@ -4,10 +4,13 @@
   <property name="name" value="arrakis"/>
   <property name="version" value=""/>
 
+  <property file="build.properties" />
+  <property name="ext-lib-base" value="http://www.havenandhearth.com/java" />
+
   <target name="build-env">
     <mkdir dir="build"/>
     <mkdir dir="build/classes"/>
-    <available property="has-res-jar" file="build/hafen-res.jar"/>
+    <available property="has-res-jar" file="bin/builtin-res.jar" />
     <available property="has-buildinfo" file="build/classes/buildinfo"/>
     <available property="unpacked-lib" file="build/classes-lib"/>
   </target>
@@ -42,15 +45,15 @@
   </target>
 
   <target name="extlib/jogl" depends="extlib-env" unless="extlib/has-jogl">
-    <extlib name="jogl" path="lib/ext/jogl" url="http://www.havenandhearth.com/java/jogl/current" />
+    <extlib name="jogl" path="lib/ext/jogl" url="${ext-lib-base}/jogl/current" />
   </target>
 
   <target name="extlib/lwjgl-base" depends="extlib-env" unless="extlib/has-lwjgl-base">
-    <extlib name="lwjgl-base" path="lib/ext/lwjgl" url="http://www.havenandhearth.com/java/lwjgl/current/lwjgl" />
+    <extlib name="lwjgl-base" path="lib/ext/lwjgl" url="${ext-lib-base}/lwjgl/current/lwjgl" />
   </target>
 
   <target name="extlib/lwjgl-gl" depends="extlib-env, extlib/lwjgl-base" unless="extlib/has-lwjgl-gl">
-    <extlib name="lwjgl-gl" path="lib/ext/lwjgl" url="http://www.havenandhearth.com/java/lwjgl/current/lwjgl-opengl" />
+    <extlib name="lwjgl-gl" path="lib/ext/lwjgl" url="${ext-lib-base}/lwjgl/current/lwjgl-opengl" />
   </target>
 
   <target name="buildinfo" depends="build-env" unless="has-buildinfo">
@@ -66,9 +69,7 @@
            bootclasspath="${boot-classpath}">
       <classpath>
         <pathelement path="lib/ext/jogl/jogl-all.jar" />
-        <pathelement path="lib/jogl.jar"/>
-        <pathelement path="lib/jnlp.jar"/>
-        <pathelement path="lib/gluegen-rt.jar"/>
+        <pathelement path="lib/ext/jogl/gluegen-rt.jar"/>
         <pathelement path="lib/jglob.jar"/>
         <pathelement path="lib/groovy-3.0.3.jar"/>
         <pathelement path="lib/JDA-4.1.1_138.jar"/>
@@ -118,7 +119,7 @@
       <manifest>
         <attribute name="Main-Class" value="haven.MainFrame"/>
         <attribute name="Class-Path"
-                   value="jogl.jar gluegen-rt.jar amber-res.jar builtin-res.jar hafen-res.jar lwjgl-fat.jar lwjgl-awt.jar lwjgl-opengl-fat.jar
+                   value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar lwjgl-fat.jar lwjgl-awt.jar lwjgl-opengl-fat.jar
                                   l10n.jar groovy-3.0.3.jar JDA-4.1.1_138.jar okhttp-3.13.0.jar slf4j-api-1.7.25.jar
                                   commons-collections4-4.1.jar okio-1.17.2.jar nv-websocket-client-2.9.jar
                                   trove4j-3.0.3.jar sqlite-jdbc-3.42.0.0.jar jackson-core-2.10.1.jar jackson-databind-2.10.1.jar
@@ -129,10 +130,14 @@
   </target>
 
   <target name="res-jar" depends="build-env" unless="has-res-jar">
-    <get src="http://game.havenandhearth.com/java/builtin-res.jar" dest="lib/builtin-res.jar"
+    <get src="${ext-lib-base}/builtin-res.jar" dest="lib/ext/builtin-res.jar"
          usetimestamp="true"/>
-    <get src="http://game.havenandhearth.com/java/hafen-res.jar" dest="lib/hafen-res.jar"
+    <get src="${ext-lib-base}/hafen-res.jar" dest="lib/ext/hafen-res.jar"
          usetimestamp="true"/>
+    <available property="lib-res-jar" file="lib/ext/hafen-res.jar" />
+    <fail unless="lib-res-jar" message="hafen-res.jar not available" />
+    <available property="lib-builtin-jar" file="lib/ext/builtin-res.jar" />
+    <fail unless="lib-builtin-jar" message="builtin-res.jar not available" />
   </target>
 
   <target name="l10n-jar" depends="build-env">
@@ -144,11 +149,8 @@
   <target name="jars" depends="build-env, jar, res-jar, l10n-jar, res, extlib/jogl, extlib/lwjgl-gl">
     <copy todir="build">
       <fileset dir="lib">
-        <include name="jogl.jar"/>
-        <include name="gluegen-rt.jar"/>
-        <include name="hafen-res.jar"/>
-        <include name="builtin-res.jar"/>
-        <include name="amber-res.jar"/>
+        <include name="ext/hafen-res.jar"/>
+        <include name="ext/builtin-res.jar"/>
         <include name="groovy-3.0.3.jar"/>
         <include name="JDA-4.1.1_138.jar"/>
         <include name="okhttp-3.13.0.jar"/>
@@ -164,11 +166,57 @@
         <include name="logback-core-1.2.3.jar"/>
         <include name="sqlite-jdbc-3.42.0.0.jar"/>
       </fileset>
-      <fileset dir="lib/jogl-natives" includes="*.jar">
+      <fileset dir="lib/ext/jogl"><include name="*.jar" /></fileset>
+      <fileset dir="lib/ext/lwjgl"><include name="*.jar" /></fileset>
+    </copy>
+    <copy file="local-config.properties" tofile="build/haven-config.properties" failonerror="false" quiet="true" />
+  </target>
+
+  <target name="bin" depends="jar, extlib/jogl, extlib/lwjgl-gl, res-jar">
+    <mkdir dir="bin" />
+    <copy todir="bin">
+      <fileset dir="build">
+        <include name="hafen.jar" />
+      </fileset>
+      <fileset dir="lib">
+        <include name="ext/hafen-res.jar" />
+        <include name="ext/builtin-res.jar" />
+        <include name="groovy-3.0.3.jar"/>
+        <include name="JDA-4.1.1_138.jar"/>
+        <include name="okhttp-3.13.0.jar"/>
+        <include name="slf4j-api-1.7.25.jar"/>
+        <include name="commons-collections4-4.1.jar"/>
+        <include name="okio-1.17.2.jar"/>
+        <include name="nv-websocket-client-2.9.jar"/>
+        <include name="trove4j-3.0.3.jar"/>
+        <include name="jackson-core-2.10.1.jar"/>
+        <include name="jackson-databind-2.10.1.jar"/>
+        <include name="jackson-annotations-2.10.1.jar"/>
+        <include name="logback-classic-1.2.3.jar"/>
+        <include name="logback-core-1.2.3.jar"/>
+        <include name="sqlite-jdbc-3.42.0.0.jar"/>
       </fileset>
       <fileset dir="lib/ext/jogl"><include name="*.jar" /></fileset>
       <fileset dir="lib/ext/lwjgl"><include name="*.jar" /></fileset>
     </copy>
+    <copy todir="bin/alarms">
+      <fileset dir="alarms/"/>
+    </copy>
+    <copy todir="bin/scripts">
+      <fileset dir="scripts/"/>
+    </copy>
+    <copy todir="bin/music">
+      <fileset dir="music"/>
+    </copy>
+    <copy todir="bin/Map_Icons_Presets">
+      <fileset dir="Map_Icons_Presets/"/>
+    </copy>
+    <copy todir="bin/res">
+      <fileset dir="res/"/>
+    </copy>
+    <copy file="etc/ansgar-config.properties" tofile="bin/haven-config.properties" />
+    <copy file="commands.txt" tofile="bin/commands.txt" />
+    <chmod file="bin/hafen.jar" perm="a+x" />
   </target>
 
   <target name="dist" depends="rebuild">
@@ -183,6 +231,8 @@
       <fileset dir="${basedir}" includes="CHANGELOG"/>
     </zip>
   </target>
+
+  <target name="deftgt" depends="jars, bin" />
 
   <target name="zzzdeftgt" depends="jars"/>
 
@@ -243,18 +293,15 @@
   <target name="prep-update">
     <copy todir="update">
       <fileset dir="lib">
-        <include name="builtin-res.jar"/>
+        <include name="ext/builtin-res.jar"/>
         <include name="commons-collections4-4.1.jar"/>
-        <include name="gluegen-rt.jar"/>
         <include name="groovy-3.0.3.jar"/>
-        <include name="hafen-res.jar"/>
+        <include name="ext/hafen-res.jar"/>
         <include name="jackson-annotations-2.10.1.jar"/>
         <include name="jackson-core-2.10.1.jar"/>
         <include name="jackson-databind-2.10.1.jar"/>
         <include name="JDA-4.1.1_138.jar"/>
         <include name="jglob.jar"/>
-        <include name="jnlp.jar"/>
-        <include name="jogl.jar"/>
         <include name="logback-classic-1.2.3.jar"/>
         <include name="logback-core-1.2.3.jar"/>
         <include name="nv-websocket-client-2.9.jar"/>
@@ -266,34 +313,28 @@
         <include name="sqlite-jdbc-3.42.0.0.jar"/>
         <include name="trove4j-3.0.3.jar"/>
       </fileset>
-      <fileset dir="lib/jogl-natives/"/>
-      <fileset dir="lib/ext/jogl/"/>
-      <fileset dir="lib/ext/lwjgl">
-        <include name="lwjgl-awt.jar"/>
-        <include name="lwjgl-fat.jar"/>
-        <include name="lwjgl-opengl-fat.jar"/>
-      </fileset>
+      <fileset dir="lib/ext/jogl/" includes="*.jar"/>
+      <fileset dir="lib/ext/lwjgl" includes="*.jar"/>
       <fileset dir="build">
         <include name="hafen.jar"/>
-        <include name="l10n.jar"/>
         <include name="haven-config.properties"/>
         <include name="commands.txt"/>
       </fileset>
     </copy>
-    <copy todir="update/Alarms">
-      <fileset dir="build/Alarms/"/>
+    <copy todir="update/alarms">
+      <fileset dir="alarms/"/>
     </copy>
     <copy todir="update/scripts">
       <fileset dir="scripts/"/>
     </copy>
     <copy todir="update/music">
-      <fileset dir="build/music"/>
+      <fileset dir="music"/>
     </copy>
     <copy todir="update/Map_Icons_Presets">
-      <fileset dir="build/Map_Icons_Presets/"/>
+      <fileset dir="Map_Icons_Presets/"/>
     </copy>
     <copy todir="update/res">
-      <fileset dir="build/res/"/>
+      <fileset dir="res/"/>
     </copy>
     <delete file="update/has-jogl"/>
   </target>
