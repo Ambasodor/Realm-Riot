@@ -176,7 +176,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public boolean areaChatLoaded = false;
 
 	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-	private static Future<?> areaChatFuture;
+	private static java.util.concurrent.Future<?> areaChatFuture;
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())

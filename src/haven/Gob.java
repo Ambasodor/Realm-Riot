@@ -107,7 +107,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public Long occupiedGobID = null;
 	public static boolean somethingJustDied = false;
 	public static final ScheduledExecutorService gobDeathExecutor = Executors.newSingleThreadScheduledExecutor();
-	private static Future<?> gobDeathFuture;
+	private static java.util.concurrent.Future<?> gobDeathFuture;
 	private boolean malePlayer = false;
 	private boolean femalePlayer = false;
 	public Boolean imInCoracle = false;
