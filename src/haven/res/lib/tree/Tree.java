@@ -11,7 +11,7 @@ import haven.res.lib.leaves.*;
 import haven.res.lib.svaj.*;
 import java.util.*;
 
-@haven.FromResource(name = "lib/tree", version = 14)
+@haven.FromResource(name = "lib/tree", version = 15)
 public class Tree extends Sprite {
     public final float fscale;
     public final RenderTree.Node[][] parts;

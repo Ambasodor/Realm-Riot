@@ -174,6 +174,13 @@ def movetoTruffle(){
 		SafeDistToPig()
 		player.moveToNoPF(newpos)
 		sleep(100)
+		goRandom++
+		if (goRandom == 100){
+			int multiplier = 650
+			player.randommove(multiplier)
+			player.waitUntilStops()
+			goRandom = 0
+		}
 		if (a == 0) {
 			log.info("I'm on point.")
 			break

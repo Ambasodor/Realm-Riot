@@ -97,7 +97,7 @@ public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo {
 		return Integer.compare(Config.statsAndAttributesOrder.indexOf(r2.layer(Resource.tooltip).t), Config.statsAndAttributesOrder.indexOf(r1.layer(Resource.tooltip).t));
 	}
 
-	public static final Object[] defn = {Loading.waitfor(Resource.classres(ISlots.class).pool.load("ui/tt/defn", 6))};
+	public static final Object[] defn = {Loading.waitfor(Resource.classres(ISlots.class).pool.load("ui/tt/defn"))};
 	public class SItem {
 		public final Resource res;
 		public final GSprite spr;

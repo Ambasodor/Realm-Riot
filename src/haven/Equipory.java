@@ -407,7 +407,7 @@ public class Equipory extends Widget implements DTarget {
 					ArmorClass = new TexI(Utils.outline2(Text.renderstroked2("Armor Class:  " + (aHard + aSoft) + " (" + aHard + " + " + aSoft + ")", Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
 					updateBottomText = false;
 				} catch (Exception e) { // fail silently
-					e.printStackTrace();// Ignored
+					//e.printStackTrace();// Ignored
 				}
 			}
 		}

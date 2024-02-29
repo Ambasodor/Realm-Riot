@@ -45,9 +45,9 @@ public class Config {
 //	public static String webClientVersion = "";
 	public static final File HOMEDIR = new File("").getAbsoluteFile();
     public static final Properties jarprops = getjarprops();
-    public static final String confid = jarprops.getProperty("config.client-id", "unknown");
+	public static final Properties localprops = getlocalprops();
+    public static final String confid = localprops.getProperty("config.client-id", "Crash2Win");
     public static final Variable<Boolean> par = Variable.def(() -> true);
-    public final Properties localprops = getlocalprops();
 
     private static Config global = null;
     public static Config get() {

@@ -75,8 +75,8 @@ public class ScriptRunner {
         if (scriptFile.exists()) {
             synchronized (scheduledTasks) {
                 log.info("Adding script to scheduler {} to run every {}", script, period);
-                ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(() -> schedule(script), 0, period.toSeconds(), TimeUnit.SECONDS);
-                scheduledTasks.put(script + "-every-" + period.toString().replace("PT", ""), future);
+                ScheduledFuture<?> fure = scheduler.scheduleAtFixedRate(() -> schedule(script), 0, period.toSeconds(), TimeUnit.SECONDS);
+                scheduledTasks.put(script + "-every-" + period.toString().replace("PT", ""), fure);
             }
         }if (!scriptFile.exists()){
             log.info("Could not find the " + script + " script");

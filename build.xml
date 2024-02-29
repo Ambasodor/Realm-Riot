@@ -71,7 +71,7 @@
         <pathelement path="lib/ext/jogl/jogl-all.jar" />
         <pathelement path="lib/ext/jogl/gluegen-rt.jar"/>
         <pathelement path="lib/jglob.jar"/>
-        <pathelement path="lib/groovy-3.0.3.jar"/>
+        <pathelement path="lib/groovy-4.0.18.jar"/>
         <pathelement path="lib/JDA-4.1.1_138.jar"/>
         <pathelement path="lib/okhttp-3.13.0.jar"/>
         <pathelement path="lib/slf4j-api-1.7.25.jar"/>
@@ -120,7 +120,7 @@
         <attribute name="Main-Class" value="haven.MainFrame"/>
         <attribute name="Class-Path"
                    value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar lwjgl-fat.jar lwjgl-awt.jar lwjgl-opengl-fat.jar
-                                  l10n.jar groovy-3.0.3.jar JDA-4.1.1_138.jar okhttp-3.13.0.jar slf4j-api-1.7.25.jar
+                                  l10n.jar groovy-4.0.18.jar JDA-4.1.1_138.jar okhttp-3.13.0.jar slf4j-api-1.7.25.jar
                                   commons-collections4-4.1.jar okio-1.17.2.jar nv-websocket-client-2.9.jar
                                   trove4j-3.0.3.jar sqlite-jdbc-3.42.0.0.jar jackson-core-2.10.1.jar jackson-databind-2.10.1.jar
                                   jackson-annotations-2.10.1.jar logback-classic-1.2.3.jar logback-core-1.2.3.jar"/>
@@ -147,56 +147,36 @@
   </target>
 
   <target name="jars" depends="build-env, jar, res-jar, l10n-jar, res, extlib/jogl, extlib/lwjgl-gl">
-    <copy todir="build">
-      <fileset dir="lib">
-        <include name="groovy-3.0.3.jar"/>
-        <include name="JDA-4.1.1_138.jar"/>
-        <include name="okhttp-3.13.0.jar"/>
-        <include name="slf4j-api-1.7.25.jar"/>
-        <include name="commons-collections4-4.1.jar"/>
-        <include name="okio-1.17.2.jar"/>
-        <include name="nv-websocket-client-2.9.jar"/>
-        <include name="trove4j-3.0.3.jar"/>
-        <include name="jackson-core-2.10.1.jar"/>
-        <include name="jackson-databind-2.10.1.jar"/>
-        <include name="jackson-annotations-2.10.1.jar"/>
-        <include name="logback-classic-1.2.3.jar"/>
-        <include name="logback-core-1.2.3.jar"/>
-        <include name="sqlite-jdbc-3.42.0.0.jar"/>
-      </fileset>
-      <fileset dir="lib/ext">
-        <include name="builtin-res.jar"/>
-        <include name="hafen-res.jar"/>
-      </fileset>
-      <fileset dir="lib/ext/jogl"><include name="*.jar" /></fileset>
-      <fileset dir="lib/ext/lwjgl"><include name="*.jar" /></fileset>
-    </copy>
-    <copy file="local-config.properties" tofile="build/haven-config.properties" failonerror="false" quiet="true" />
   </target>
 
-  <target name="bin" depends="jar, extlib/jogl, extlib/lwjgl-gl, res-jar">
+  <target name="bin" depends="jar, extlib/jogl, extlib/lwjgl-gl, res-jar, res">
     <mkdir dir="bin" />
     <copy todir="bin">
       <fileset dir="build">
         <include name="hafen.jar" />
       </fileset>
+      <fileset dir="lib/ext">
+        <include name="builtin-res.jar"/>
+        <include name="hafen-res.jar"/>
+      </fileset>
       <fileset dir="lib">
-        <include name="ext/hafen-res.jar" />
-        <include name="ext/builtin-res.jar" />
-        <include name="groovy-3.0.3.jar"/>
-        <include name="JDA-4.1.1_138.jar"/>
-        <include name="okhttp-3.13.0.jar"/>
-        <include name="slf4j-api-1.7.25.jar"/>
         <include name="commons-collections4-4.1.jar"/>
-        <include name="okio-1.17.2.jar"/>
-        <include name="nv-websocket-client-2.9.jar"/>
-        <include name="trove4j-3.0.3.jar"/>
+        <include name="groovy-4.0.18.jar"/>
+        <include name="jackson-annotations-2.10.1.jar"/>
         <include name="jackson-core-2.10.1.jar"/>
         <include name="jackson-databind-2.10.1.jar"/>
-        <include name="jackson-annotations-2.10.1.jar"/>
+        <include name="JDA-4.1.1_138.jar"/>
+        <include name="jglob.jar"/>
         <include name="logback-classic-1.2.3.jar"/>
         <include name="logback-core-1.2.3.jar"/>
+        <include name="nv-websocket-client-2.9.jar"/>
+        <include name="okhttp-3.13.0.jar"/>
+        <include name="okio-1.17.2.jar"/>
+        <include name="rxjava-1.1.5.jar"/>
+        <include name="rxjava-1.1.5-javadoc.jar"/>
+        <include name="slf4j-api-1.7.25.jar"/>
         <include name="sqlite-jdbc-3.42.0.0.jar"/>
+        <include name="trove4j-3.0.3.jar"/>
       </fileset>
       <fileset dir="lib/ext/jogl"><include name="*.jar" /></fileset>
       <fileset dir="lib/ext/lwjgl"><include name="*.jar" /></fileset>
@@ -218,7 +198,7 @@
     </copy>
     <copy file="etc/ansgar-config.properties" tofile="bin/haven-config.properties" />
     <copy file="commands.txt" tofile="bin/commands.txt" />
-    <chmod file="bin/hafen.jar" perm="a+x" />
+    <chmod file="build/hafen.jar" perm="a+x"/>
   </target>
 
   <target name="dist" depends="rebuild">
@@ -244,6 +224,7 @@
 
   <target name="clean">
     <delete dir="build" />
+    <delete dir="bin" />
   </target>
 
   <target name="rebuild" depends="clean, jars, res">
@@ -284,19 +265,19 @@
     <exec executable="java" failifexecutionfails="false">
       <arg line="-jar resources/LayerUtil.jar -re from to" />
     </exec>
-    <copy todir="build/res/custom/" >
+    <copy todir="res/custom/" >
       <fileset dir="resources/to/" includes="**"/>
     </copy>
-    <copy todir="build/res/" >
+    <copy todir="res/" >
       <fileset dir="sounds/" includes="**"/>
     </copy>
   </target>
 
-  <target name="prep-update">
+  <target name="prep-update" depends="res, jars">
     <copy todir="update">
       <fileset dir="lib">
         <include name="commons-collections4-4.1.jar"/>
-        <include name="groovy-3.0.3.jar"/>
+        <include name="groovy-4.0.18.jar"/>
         <include name="jackson-annotations-2.10.1.jar"/>
         <include name="jackson-core-2.10.1.jar"/>
         <include name="jackson-databind-2.10.1.jar"/>
@@ -319,12 +300,10 @@
       </fileset>
       <fileset dir="lib/ext/jogl/" includes="*.jar"/>
       <fileset dir="lib/ext/lwjgl" includes="*.jar"/>
-      <fileset dir="build">
-        <include name="hafen.jar"/>
-        <include name="haven-config.properties"/>
-        <include name="commands.txt"/>
-      </fileset>
     </copy>
+    <copy file="etc/ansgar-config.properties" tofile="update/haven-config.properties"/>
+    <copy file="build/hafen.jar" tofile="update/hafen.jar"/>
+    <copy file="commands.txt" tofile="update/commands.txt"/>
     <copy todir="update/alarms">
       <fileset dir="alarms/"/>
     </copy>

@@ -30,27 +30,34 @@ import haven.render.*;
 import java.util.function.*;
 
 public interface EquipTarget {
-    public final Supplier<Pipe.Op> nil = () -> Pipe.Op.nil;
+	public final Supplier<Pipe.Op> nil = () -> Pipe.Op.nil;
 
-    public Supplier<? extends Pipe.Op> eqpoint(String nm, Message dat);
+	public Supplier<? extends Pipe.Op> eqpoint(String nm, Message dat);
 
-    public static class NoSuchTarget extends IllegalArgumentException {
-	public final String tgt, nm;
+	public static class NoSuchTarget extends IllegalArgumentException {
+		public final String tgt, nm, ctx;
 
-	public NoSuchTarget(EquipTarget tgt, String nm) {
-	    this.tgt = String.valueOf(tgt);
-	    this.nm = nm;
+		public NoSuchTarget(EquipTarget tgt, String nm, Object ctx) {
+			this.tgt = String.valueOf(tgt);
+			this.nm = nm;
+			this.ctx = (ctx == null) ? null : String.valueOf(ctx);
+		}
+
+		public String getMessage() {
+			if(ctx == null)
+				return(String.format("No such eqpoint: %s on %s", nm, tgt));
+			return(String.format("No such eqpoint: %s on %s, from %s", nm, tgt, ctx));
+		}
 	}
 
-	public String getMessage() {
-	    return(String.format("No such eqpoint: %s on %s", nm, tgt));
+	public static Supplier<? extends Pipe.Op> eqpoint(EquipTarget tgt, String nm, Message dat, Object ctx) {
+		Supplier<? extends Pipe.Op> ret = tgt.eqpoint(nm, dat);
+		if(ret == null)
+			throw(new NoSuchTarget(tgt, nm, ctx));
+		return(ret);
 	}
-    }
 
-    public static Supplier<? extends Pipe.Op> eqpoint(EquipTarget tgt, String nm, Message dat) {
-	Supplier<? extends Pipe.Op> ret = tgt.eqpoint(nm, dat);
-	if(ret == null)
-	    throw(new NoSuchTarget(tgt, nm));
-	return(ret);
-    }
+	public static Supplier<? extends Pipe.Op> eqpoint(EquipTarget tgt, String nm, Message dat) {
+		return(eqpoint(tgt, nm, dat, null));
+	}
 }

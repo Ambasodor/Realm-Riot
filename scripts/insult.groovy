@@ -14,6 +14,6 @@ insults = ["YOU MAKE ME WISH I HAD MORE MIDDLE FINGERS.",
            ]
 Random rnd = new Random()
  
-println(rnd.next(102))
+//println(rnd.next(102))
 
 player.realmSay("${insults[rnd.nextInt(insults.size())]}", "PUBLIC")

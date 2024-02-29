@@ -11,7 +11,7 @@ import java.util.function.*;
 import java.awt.image.BufferedImage;
 
 /* >spr: Decal */
-@haven.FromResource(name = "gfx/terobjs/items/decal", version = 4)
+@haven.FromResource(name = "gfx/terobjs/items/decal", version = 5)
 public class Decal implements Sprite.Factory {
     public Sprite create(Sprite.Owner owner, Resource res, Message sdt) {
 	Supplier<Pipe.Op> eq = null;
@@ -21,7 +21,7 @@ public class Decal implements Sprite.Factory {
 	    if(ores != null) {
 		Skeleton.BoneOffset bo = ores.layer(Skeleton.BoneOffset.class, "decal");
 		if(bo != null)
-		    eq = bo.from(Skeleton.getpose(gob));
+		    eq = bo.from(gob);
 	    }
 	}
 	Material base = res.layer(Material.Res.class, 16).get();
@@ -32,10 +32,10 @@ public class Decal implements Sprite.Factory {
 	} else {
 	    pc = new Coord3f((float)(sdt.float16() * MCache.tilesz.x), -(float)(sdt.float16() * MCache.tilesz.y), 0);
 	}
-	var ownerres = owner.getres();
-	if (ownerres != null && ownerres.name.equals("gfx/terobjs/cupboard")) {
-		pc = Coord3f.of(0, 0, 1);
-	}
+		var ownerres = owner.getres();
+		if (ownerres != null && ownerres.name.equals("gfx/terobjs/cupboard")) {
+			pc = Coord3f.of(0, 0, 1);
+		}
 	Location offset = null;
 	if(eq == null)
 	    offset = Location.xlate(pc);
