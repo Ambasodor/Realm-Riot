@@ -181,7 +181,7 @@
       <fileset dir="lib/ext/jogl"><include name="*.jar" /></fileset>
       <fileset dir="lib/ext/lwjgl"><include name="*.jar" /></fileset>
     </copy>
-    <copy todir="bin/alarms">
+    <copy todir="bin/Alarms">
       <fileset dir="alarms/"/>
     </copy>
     <copy todir="bin/scripts">
@@ -242,7 +242,7 @@
       <fileset dir="res" includes="**"/>
     </copy>
     <copy todir="build/Alarms" >
-      <fileset dir="Alarms" includes="**"/>
+      <fileset dir="alarms" includes="**"/>
     </copy>
     <copy todir="build/Map_Icons_Presets" >
       <fileset dir="Map_Icons_Presets" includes="**"/>
@@ -304,7 +304,7 @@
     <copy file="etc/ansgar-config.properties" tofile="update/haven-config.properties"/>
     <copy file="build/hafen.jar" tofile="update/hafen.jar"/>
     <copy file="commands.txt" tofile="update/commands.txt"/>
-    <copy todir="update/alarms">
+    <copy todir="update/Alarms">
       <fileset dir="alarms/"/>
     </copy>
     <copy todir="update/scripts">
