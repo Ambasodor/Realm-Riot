@@ -118,6 +118,23 @@ public class LinePathSprite extends Sprite implements PView.Render2D {
                                         }
                                     }
                                 }
+                                if (gob.getres().name.equals("gfx/kritter/horse/stallion") || gob.getres().name.equals("gfx/kritter/horse/mare")) {
+                                    for (Gob occupant : gob.occupants) {
+                                        if (occupant.getPoses().contains("riding-idle") || occupant.getPoses().contains("riding-trot") || occupant.getPoses().contains("riding-gallop")) {
+                                            if (occupant.isMe()) {
+                                                final Coord3f pc = gob.getc();
+                                                Coord pla = pc.round2();
+                                                double x = mc.x - pc.x;
+                                                double y = -(mc.y - pc.y);
+                                                Coord ChaserCoord = mv.screenxf(pc).round2();
+                                                Coord TargetCoord = mv.screenxf(mc).round2();
+                                                Color chaserColor = MAINCOLOR;
+                                                g.chcolor(MAINCOLOR);
+                                                g.line(ChaserCoord, TargetCoord, 1.5);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
