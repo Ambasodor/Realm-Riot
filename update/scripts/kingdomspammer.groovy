@@ -1,1 +1,1 @@
-player.realmSay("https://discord.gg/n2qGz4cY : Kingdom Discord", "PUBLIC")
+player.realmSay("https://discord.gg/n2qGz4cY : Kingdom Discord", "PUBLIC (P)")

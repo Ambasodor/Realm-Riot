@@ -28,7 +28,7 @@ public class LinePathSprite extends Sprite implements PView.Render2D {
     };
 
     public void draw(GOut g, Pipe state) {
-        if (OptWnd.drawChaseVectorsCheckBox.a) {
+        if (OptWnd.drawPathVectorCheckBox.a) {
             try {
                 Gob gob = (Gob) owner;
                 UI ui = gob.glob.sess.ui;

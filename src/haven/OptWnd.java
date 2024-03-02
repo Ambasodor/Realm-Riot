@@ -1031,6 +1031,18 @@ public class OptWnd extends Window {
 				}
 			}
 		}, leftColumn.pos("bl").adds(0, 12));
+		leftColumn = add(drawPathVectorCheckBox = new CheckBox("Draw Player Path Vector"){
+			{a = (Utils.getprefb("Draw Path Vector", false));}
+			public void set(boolean val) {
+				Utils.setprefb("Draw Path Vector", val);
+				a = val;
+				if (ui.sess != null)
+					ui.sess.glob.map.invalidateAll();
+				if (ui != null && ui.gui != null) {
+					ui.gui.optionInfoMsg("Player Path Highlighting is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
+				}
+			}
+		}, leftColumn.pos("bl").adds(0, 12));
 
 		rightColumn = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Show Object Collision Boxes"){
 			{a = (Utils.getprefb("gobCollisionBoxesDisplayToggle", false));}
@@ -2000,6 +2012,7 @@ public class OptWnd extends Window {
 	public static CheckBox partyMembersCirclesCheckBox;
 	public static CheckBox aggroedEnemiesCirclesCheckBox;
 	public static CheckBox drawChaseVectorsCheckBox;
+	public static CheckBox drawPathVectorCheckBox;
 	public static CheckBox proximityaggroPVPCheckBox;
 	public static Button damageInfoClearButton;
 	public class NDCombatSettingsPanel extends Panel {

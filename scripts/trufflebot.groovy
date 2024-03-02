@@ -16,7 +16,7 @@ def unstuck(def coords, def stuckCoords, def toRandom){
 		if (toRandom == 50) {
 			int multiplier = 650
 			player.randommove(multiplier)
-			player.waitUntilStops()
+			player.ClaywaitUntilStops()
 			toRandom = 0
 		}
 		if (toRandom != 50) {
@@ -28,7 +28,7 @@ def unstuck(def coords, def stuckCoords, def toRandom){
 def waypointWalker(def points) {
 	def absolute
 	def stuckCoords
-	def toRandom = 0
+	int goRandom = 0
 	def start = player.getPlayerCoords()
 	if (start == null){
 		start = player.getPlayerCoords()
@@ -50,9 +50,22 @@ def waypointWalker(def points) {
 			absolute = player.SdistanceBetweenCoords(newpos)
 			player.moveToNoPF(newpos)
 			log.info("distance left - ${absolute}")
-			sleep(100)
+			sleep(150)
 			stuckCoords = player.SdistanceBetweenCoords(newpos)
-			unstuck(absolute, stuckCoords, toRandom)
+			goRandom++
+				if (goRandom == 100) {
+					stuckCoords = player.SdistanceBetweenCoords(newpos)
+					if (absolute == stuckCoords) {
+					int multiplier = 650
+					while(absolute == stuckCoords) {
+						player.randommove(multiplier)
+						sleep(500)
+						goRandom = 0
+						stuckCoords = player.SdistanceBetweenCoords(newpos)
+						if (absolute != stuckCoords) break
+					}
+				}
+			}
 			if (absolute == 0) {
 				log.info("I'm on point.")
 				break
@@ -115,15 +128,24 @@ def pickupTruffle(){
 	int goRandom = 0
 	if (truffles != null){
 		while (truffles != null){
+			absolute = player.distanceTo(truffles)
 			player.PickupGob(truffles)
-			sleep(100)
+			sleep(150)
 			goRandom++
+			stuckCoords = player.distanceTo(truffles)
 			truffles = player.isGob("truffle")
-			if (goRandom == 200){
-				int multiplier = 650
-				player.randommove(multiplier)
-				player.waitUntilStops()
-				goRandom = 0
+			if (goRandom == 100) {
+				stuckCoords = player.distanceTo(truffles)
+				if (absolute == stuckCoords) {
+					int multiplier = 650
+					while(absolute == stuckCoords) {
+						player.randommove(multiplier)
+						sleep(500)
+						goRandom = 0
+						stuckCoords = player.SdistanceBetweenCoords(newpos)
+						if (absolute != stuckCoords) break
+					}
+				}
 			}
 			if (truffles == null) break
 		}
@@ -147,18 +169,28 @@ def movetoTruffle(){
 	newpos = next
 	truffles = player.isGob("truffle")
 	DistanceToTruffle = player.distanceTo(truffles)
+	absolute = player.distanceTo(truffles)
 	player.LeftClickGob(truffles)
 	while(DistanceToTruffle != 11){
+		absolute = player.distanceTo(truffles)
 		log.info("distance left - ${DistanceToTruffle}")
-		sleep(100)
+		sleep(150)
 		goRandom++
 		DistanceToTruffle = player.distanceTo(truffles)
+		stuckCoords = player.distanceTo(truffles)
 		player.LeftClickGob(truffles)
-		if (goRandom == 100){
-			int multiplier = 650
-			player.randommove(multiplier)
-			player.waitUntilStops()
-			goRandom = 0
+		if (goRandom == 100) {
+			stuckCoords = player.distanceTo(truffles)
+			if (absolute == stuckCoords) {
+				int multiplier = 650
+				while(absolute == stuckCoords) {
+					player.randommove(multiplier)
+					sleep(500)
+					goRandom = 0
+					stuckCoords = player.SdistanceBetweenCoords(newpos)
+					if (absolute != stuckCoords) break
+				}
+			}
 		}
 		if (DistanceToTruffle == 0){
 			log.info("I'm on truffle place.")
@@ -173,13 +205,22 @@ def movetoTruffle(){
 		a = player.SdistanceBetweenCoords(newpos)
 		SafeDistToPig()
 		player.moveToNoPF(newpos)
-		sleep(100)
+		absolute = player.SdistanceBetweenCoords(newpos)
+		sleep(150)
+		stuckCoords = player.SdistanceBetweenCoords(newpos)
 		goRandom++
-		if (goRandom == 100){
-			int multiplier = 650
-			player.randommove(multiplier)
-			player.waitUntilStops()
-			goRandom = 0
+		if (goRandom == 100) {
+			stuckCoords = player.SdistanceBetweenCoords(newpos)
+			if (absolute == stuckCoords) {
+				int multiplier = 650
+				while(absolute == stuckCoords) {
+					player.randommove(multiplier)
+					sleep(500)
+					goRandom = 0
+					stuckCoords = player.SdistanceBetweenCoords(newpos)
+					if (absolute != stuckCoords) break
+				}
+			}
 		}
 		if (a == 0) {
 			log.info("I'm on point.")
@@ -222,7 +263,7 @@ def ClickOnPig(){
 	def leashed
 	pig = player.isGob("pig")
 	player.useOn(pig)
-	player.waitUntilStops()
+	player.ClaywaitUntilStops()
 	sleep(250)
 	leashed = inventory.CoursorIsLeashed()
 	if (leashed == null){
@@ -234,7 +275,7 @@ def ClickOnPig(){
 	if (!leashed){
 		while (!leashed){
 			player.useOn(pig)
-			player.waitUntilStops()
+			player.ClaywaitUntilStops()
 			if (leashed){
 				log.info("Pig is leashed.")
 				break
