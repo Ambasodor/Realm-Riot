@@ -463,7 +463,7 @@ public class Fightview extends Widget {
             return;
         } else if(msg == "del") {
             Relation rel = getrel(uint32((Integer)args[0]));
-			if (unaggro && this.ui != null && this.ui.gui != null) {
+			if (unaggro && rel.autopeaced && this.ui != null && this.ui.gui != null) {
 				this.autogivegobid = rel.gobid;
 				rel.remove();
 				rel.destroy();
