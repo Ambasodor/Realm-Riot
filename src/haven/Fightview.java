@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.automated.AUtils;
+import haven.botengine.GroovyScriptList;
 import haven.sprites.AggroCircleSprite;
 
 import javax.sound.sampled.AudioFormat;
@@ -37,6 +39,7 @@ import java.util.*;
 import java.util.List;
 
 import static haven.Utils.uint32;
+import static haven.automated.AUtils.attackGobId;
 
 public class Fightview extends Widget {
     public static final Tex bg = Resource.loadtex("gfx/hud/bosq");
@@ -60,6 +63,8 @@ public class Fightview extends Widget {
     public double lastuse = 0;
     public Mainrel curdisp;
     public List<Relation> nonmain = Collections.emptyList();
+	private long autogivegobid;
+	private boolean unaggro = false;
 
     public class Relation {
         public final long gobid;
@@ -84,7 +89,6 @@ public class Fightview extends Widget {
 	public void give(int state) {
 	    this.gst = state;
 	}
-
 	public void remove() {
 	    buffs.destroy();
 	    relbuffs.destroy();
@@ -220,14 +224,21 @@ public class Fightview extends Widget {
 	public final Avaview ava;
 	public final GiveButton give;
 	public final Button purs;
+	public UNNAGGRO un = null;
 
 	public Mainrel(Relation rel) {
 	    this.rel = rel;
 	    Widget avaf = add(Frame.with(ava = new Avaview(Avaview.dasz, rel.gobid, "avacam"), false));
 	    ava.canactivate = true;
 	    adda(give = new GiveButton(0), avaf.pos("ul").subs(5, 0), 1.0, 0.0);
-	    adda(purs = new Button(UI.scale(70), "Pursue"), give.pos("br").adds(0, 5), 1.0, 0.0);
-	    lpack();
+		adda(purs = new Button(UI.scale(70), "Pursue"), give.pos("br").adds(0, 5), 1.0, 0.0);
+		if (!unaggro) {
+			adda(un = new UNNAGGRO(50, "OFF", Color.red), purs.pos("br").subs(0, 0), 1.0, 0.0);
+		}
+		if (unaggro) {
+			adda(un = new UNNAGGRO(50, "ON", Color.green), purs.pos("br").subs(0, 0), 1.0, 0.0);
+		}
+		lpack();
 	}
 
 	private void lpack() {
@@ -245,7 +256,29 @@ public class Fightview extends Widget {
 	    give.state = rel.gst;
 	    super.draw(g);
 	}
+		private class UNNAGGRO extends Button {
 
+			public UNNAGGRO(int w, String text, Color color){
+				super(w,text,color);
+				this.text = tf.render(text, color);
+				this.cont = this.text.img;
+				redraw();
+			}
+
+			@Override
+			public void click() {
+				if (unaggro == false) {
+					super.change("ON", Color.green);
+					unaggro = true;
+					ui.gui.optionInfoMsg("ReAggro turned on!", Color.green);
+				} else if (unaggro == true){
+					super.change("OFF", Color.red);
+					unaggro = false;
+					rel.autopeaced = false;
+					ui.gui.optionInfoMsg("ReAggro turned off!", Color.red);
+				}
+			}
+		}
 	public void wdgmsg(Widget sender, String msg, Object... args) {
 	    if(sender == ava) {
 		Fightview.this.wdgmsg("click", (int)rel.gobid, args[0]);
@@ -276,6 +309,7 @@ public class Fightview extends Widget {
     
     public Fightview() {
         super(new Coord(width, (bg.sz().y + ymarg) * height));
+		this.autogivegobid = -1L;
 	lsdisp = add(new Rellist(height));
 	layout();
     }
@@ -381,6 +415,15 @@ public class Fightview extends Widget {
 					rel.autopeaced = true;
 				}
 			}
+			if (unaggro && !rel.autopeaced && curdisp.give.state != 1){
+				synchronized (ui.sess.glob) {
+					Gob curgob = ui.sess.glob.oc.getgob(rel.gobid);
+					if (curgob != null) {
+						wdgmsg("give", (int)rel.gobid, 1);
+					}
+					rel.autopeaced = true;
+				}
+			}
 		} catch (Exception ignored) {}
 	}
     }
@@ -420,18 +463,36 @@ public class Fightview extends Widget {
             return;
         } else if(msg == "del") {
             Relation rel = getrel(uint32((Integer)args[0]));
+			if (unaggro && this.ui != null && this.ui.gui != null) {
+				this.autogivegobid = rel.gobid;
+				rel.remove();
+				rel.destroy();
+				lsrel.remove(rel);
+				if(rel == current)
+					setcur(null);
+				updrel();
+				if(!attackGobId(this.ui.gui, this.autogivegobid)){
+					this.autogivegobid = -1L;
+					unaggro = false;
+					rel.autopeaced = false;
+					ui.gui.optionInfoMsg("ReAggro turned off!", Color.red);
+				}
+			}
 	    rel.remove();
 		rel.destroy();
 		lsrel.remove(rel);
 	    if(rel == current)
-		setcur(null);
+			setcur(null);
 	    updrel();
 		ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 		ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated);
             return;
         } else if(msg == "upd") {
-            Relation rel = getrel(uint32((Integer)args[0]));
+			Relation rel = getrel(uint32((Integer)args[0]));
 	    rel.give((Integer)args[1]);
+		if ((Integer)args[1] == 0){
+			rel.autopeaced = false;
+		}
 	    rel.ip = (Integer)args[2];
 	    rel.oip = (Integer)args[3];
             return;

@@ -97,6 +97,10 @@ public class Button extends SIWidget {
 	this.cont = this.text.img;
 	this.action = action;
     }
+	public Button(int w, String text, Color color){
+		this(w, text);
+		this.text = tf.render(text, color);
+	}
 
     public Button(int w, String text, boolean lg) {
 	this(w, text, lg, null);

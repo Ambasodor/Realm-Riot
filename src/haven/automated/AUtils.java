@@ -1,8 +1,13 @@
 package haven.automated;
 
 import haven.*;
+import haven.Button;
+import haven.Composite;
+import haven.Window;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
@@ -17,7 +22,33 @@ public class AUtils {
             rightClick(gui);
         }
     }
-
+    public static Gob GetGobByID(GameUI gui, long id){
+        synchronized (gui.map.glob.oc) {
+            for (final Gob gob : gui.map.glob.oc) {
+                Resource res = null;
+                try {
+                    res = gob.getres();
+                }
+                catch (Loading loading) {}
+                if (res != null && (gob.id == id)) {
+                    return gob;
+                }
+            }
+        }
+        return null;
+    }
+    public static boolean attackGobId(GameUI gui, Long gobid) {
+        Gob gob = GetGobByID(gui,gobid);
+        if (gob != null && gui != null && gui.map != null) {
+            if (!gob.getPoses().contains("knock") || !gob.getPoses().contains("dead") || !gob.getPoses().contains("waterdead")) {
+                    gui.act("aggro");
+                    gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 1, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
+                    rightClick(gui);
+                    return true;
+            }
+        }
+        return false;
+    }
     public static void rightClick(GameUI gui) {
         gui.map.wdgmsg("click", Coord.z, gui.map.player().rc.floor(posres), 3, 0);
     }
