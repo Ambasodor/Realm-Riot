@@ -418,7 +418,7 @@ public class Fightview extends Widget {
 			if (unaggro && !rel.autopeaced && curdisp.give.state != 1){
 				synchronized (ui.sess.glob) {
 					Gob curgob = ui.sess.glob.oc.getgob(rel.gobid);
-					if (curgob != null) {
+					if (curgob != null && !curgob.getres().name.contains("gfx/borka")) {
 						wdgmsg("give", (int)rel.gobid, 1);
 					}
 					rel.autopeaced = true;
