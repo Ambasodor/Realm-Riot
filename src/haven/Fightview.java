@@ -420,8 +420,8 @@ public class Fightview extends Widget {
 					Gob curgob = ui.sess.glob.oc.getgob(rel.gobid);
 					if (curgob != null && !curgob.getres().name.contains("gfx/borka")) {
 						wdgmsg("give", (int)rel.gobid, 1);
+						rel.autopeaced = true;
 					}
-					rel.autopeaced = true;
 				}
 			}
 		} catch (Exception ignored) {}
