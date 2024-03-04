@@ -6,11 +6,17 @@ import haven.Window;
 import haven.*;
 import haven.botengine.discord.Discord;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
+import static haven.Audio.volume;
 import static haven.OCache.posres;
 import static java.lang.System.out;
 
@@ -417,7 +423,7 @@ public class WhaleBot extends Window implements Runnable {
                             while (this.tryes != 1) {
                                 if (this.tryes == 1) break;
                                 Defer.later(() -> {
-                                    Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                    playsound("Alarms/ND_Orca.wav");
                                     return (null);
                                 });
                                 this.tryes++;
@@ -432,7 +438,7 @@ public class WhaleBot extends Window implements Runnable {
                             while (this.tryes != 1) {
                                 if (this.tryes == 1) break;
                                 Defer.later(() -> {
-                                    Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                    playsound("Alarms/ND_Orca.wav");
                                     return (null);
                                 });
                                 this.tryes++;
@@ -449,7 +455,7 @@ public class WhaleBot extends Window implements Runnable {
                             while (this.tryes != 1) {
                                 if (this.tryes == 1) break;
                                 Defer.later(() -> {
-                                    Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                    playsound("Alarms/ND_Orca.wav");
                                     return (null);
                                 });
                                 this.tryes++;
@@ -743,7 +749,7 @@ public class WhaleBot extends Window implements Runnable {
                                         while (this.tryes != 1) {
                                             if (this.tryes == 1) break;
                                             Defer.later(() -> {
-                                                Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                                playsound("Alarms/ND_Orca.wav");
                                                 return (null);
                                             });
                                             this.tryes++;
@@ -876,7 +882,7 @@ public class WhaleBot extends Window implements Runnable {
                                         while (this.tryes != 1) {
                                             if (this.tryes == 1) break;
                                             Defer.later(() -> {
-                                                Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                                playsound("Alarms/ND_Orca.wav");
                                                 return (null);
                                             });
                                             this.tryes++;
@@ -997,7 +1003,7 @@ public class WhaleBot extends Window implements Runnable {
                                         while (this.tryes != 1) {
                                             if (this.tryes == 1) break;
                                             Defer.later(() -> {
-                                                Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                                playsound("Alarms/ND_Orca.wav");
                                                 return (null);
                                             });
                                             this.tryes++;
@@ -1120,7 +1126,7 @@ public class WhaleBot extends Window implements Runnable {
                                         while (this.tryes != 1) {
                                             if (this.tryes == 1) break;
                                             Defer.later(() -> {
-                                                Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                                playsound("Alarms/ND_Orca.wav");
                                                 return (null);
                                             });
                                             this.tryes++;
@@ -1208,7 +1214,7 @@ public class WhaleBot extends Window implements Runnable {
                                     while (this.tryes != 1) {
                                         if (this.tryes == 1) break;
                                         Defer.later(() -> {
-                                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                            playsound("Alarms/ND_Orca.wav");
                                             return (null);
                                         });
                                         this.tryes++;
@@ -1278,7 +1284,7 @@ public class WhaleBot extends Window implements Runnable {
                                     while (this.tryes != 1) {
                                         if (this.tryes == 1) break;
                                         Defer.later(() -> {
-                                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                            playsound("Alarms/ND_Orca.wav");
                                             return (null);
                                         });
                                         this.tryes++;
@@ -1348,7 +1354,7 @@ public class WhaleBot extends Window implements Runnable {
                                     while (this.tryes != 1) {
                                         if (this.tryes == 1) break;
                                         Defer.later(() -> {
-                                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                            playsound("Alarms/ND_Orca.wav");
                                             return (null);
                                         });
                                         this.tryes++;
@@ -1418,7 +1424,7 @@ public class WhaleBot extends Window implements Runnable {
                                     while (this.tryes != 1) {
                                         if (this.tryes == 1) break;
                                         Defer.later(() -> {
-                                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                            playsound("Alarms/ND_Orca.wav");
                                             return (null);
                                         });
                                         this.tryes++;
@@ -1493,7 +1499,7 @@ public class WhaleBot extends Window implements Runnable {
                                     while (this.tryes != 1) {
                                         if (this.tryes == 1) break;
                                         Defer.later(() -> {
-                                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                            playsound("Alarms/ND_Orca.wav");
                                             return (null);
                                         });
                                         this.tryes++;
@@ -1563,7 +1569,7 @@ public class WhaleBot extends Window implements Runnable {
                                     while (this.tryes != 1) {
                                         if (this.tryes == 1) break;
                                         Defer.later(() -> {
-                                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                            playsound("Alarms/ND_Orca.wav");
                                             return (null);
                                         });
                                         this.tryes++;
@@ -1633,7 +1639,7 @@ public class WhaleBot extends Window implements Runnable {
                                     while (this.tryes != 1) {
                                         if (this.tryes == 1) break;
                                         Defer.later(() -> {
-                                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                            playsound("Alarms/ND_Orca.wav");
                                             return (null);
                                         });
                                         this.tryes++;
@@ -1703,7 +1709,7 @@ public class WhaleBot extends Window implements Runnable {
                                     while (this.tryes != 1) {
                                         if (this.tryes == 1) break;
                                         Defer.later(() -> {
-                                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                                            playsound("Alarms/ND_Orca.wav");
                                             return (null);
                                         });
                                         this.tryes++;
@@ -1791,7 +1797,7 @@ public class WhaleBot extends Window implements Runnable {
                     while (this.tryes != 1) {
                         if (this.tryes == 1) break;
                         Defer.later(() -> {
-                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                            playsound("Alarms/ND_Orca.wav");
                             return (null);
                         });
                         this.tryes++;
@@ -1870,7 +1876,7 @@ public class WhaleBot extends Window implements Runnable {
                     while (this.tryes != 1) {
                         if (this.tryes == 1) break;
                         Defer.later(() -> {
-                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                            playsound("Alarms/ND_Orca.wav");
                             return (null);
                         });
                         this.tryes++;
@@ -1933,7 +1939,7 @@ public class WhaleBot extends Window implements Runnable {
                     while (this.tryes != 1) {
                         if (this.tryes == 1) break;
                         Defer.later(() -> {
-                            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+                            playsound("Alarms/ND_Orca.wav");
                             return (null);
                         });
                         this.tryes++;
@@ -2112,6 +2118,21 @@ public class WhaleBot extends Window implements Runnable {
         gui.map.wdgmsg("click", new Object[] { Coord.z, gob.rc.floor(OCache.posres), 3, 0, 0, (int)gob.id, gob.rc.floor(OCache.posres), 0, -1 });
         Thread.sleep(3000);
         FlowerMenuClick(action);
+    }
+
+    public void playsound(String Path){
+        File file = new File(Path);
+        try {
+            AudioInputStream in = AudioSystem.getAudioInputStream(file);
+            AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+            AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+            Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+            ((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi,volume/2));
+        } catch(UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void move(int x, int y) {

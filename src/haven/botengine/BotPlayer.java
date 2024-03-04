@@ -12,6 +12,10 @@ import haven.render.Homo3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static haven.Audio.volume;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 import static haven.VMeter.Fuel_Color;
@@ -771,7 +776,7 @@ public void closewindow(Window w){
     }
     public void playAlarmsound(){
         Defer.later(() -> {
-            Audio.play(Resource.local().loadwait("custom/orcaAndWhale"));
+            playsound("Alarms/ND_Orca.wav");
             return (null);
         });
     }
@@ -1438,7 +1443,20 @@ public MapMesh getTilePool(int x, int y){
         }
         return false;
     }
-
+    public void playsound(String Path){
+        File file = new File(Path);
+        try {
+            AudioInputStream in = AudioSystem.getAudioInputStream(file);
+            AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+            AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+            Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+            ((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi,volume/2));
+        } catch(UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
     public int getEnergyMeter() {
         IMeter hp = environment.getGui().getmeter("nrj");
         if (hp != null) {

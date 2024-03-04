@@ -26,7 +26,13 @@
 
 package haven;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -43,6 +49,7 @@ public class LoginScreen extends Widget {
     private Button optbtn;
     private OptWnd opts = new OptWnd(false);
 	AccountList accounts;
+
 //	private Window updateWindow;
 //	private static boolean updateWindowShown = false;
 
@@ -95,7 +102,24 @@ public class LoginScreen extends Widget {
 //		}
 //	};
     }
-
+	public void playsound(String Path){
+		File file = new File(Path);
+		if(!file.exists() || file.isDirectory()) {
+			if (ui != null && ui.gui != null)
+				ui.gui.msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+		}
+		try {
+			AudioInputStream in = AudioSystem.getAudioInputStream(file);
+			AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+			AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+			Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+			((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi));
+		} catch(UnsupportedAudioFileException e) {
+			e.printStackTrace();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
     //public static final KeyBinding kb_savtoken = KeyBinding.get("login/savtoken", KeyMatch.forchar('R', KeyMatch.M)); // ND: Why the fuck are there keybinds for these? Someone might press one of those by mistake.
     //public static final KeyBinding kb_deltoken = KeyBinding.get("login/deltoken", KeyMatch.forchar('F', KeyMatch.M)); // ND: No drink button keybind, BUT OH BOY WE COULD REALLY USE A REMEMBER/FORGET ACCOUNT KEYBIND!
     public class Credbox extends Widget {

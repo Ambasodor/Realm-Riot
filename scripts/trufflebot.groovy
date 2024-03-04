@@ -53,9 +53,9 @@ def waypointWalker(def points) {
 			sleep(150)
 			stuckCoords = player.SdistanceBetweenCoords(newpos)
 			goRandom++
-				if (goRandom == 100) {
-					stuckCoords = player.SdistanceBetweenCoords(newpos)
-					if (absolute == stuckCoords) {
+			if (goRandom == 100) {
+				stuckCoords = player.SdistanceBetweenCoords(newpos)
+				if (absolute == stuckCoords) {
 					int multiplier = 650
 					while(absolute == stuckCoords) {
 						player.randommove(multiplier)
@@ -233,6 +233,7 @@ def findTruffle() {
 	def truffles = player.isGob("truffle")
 	if (truffles != null){
 		log.info("i found truffle, trying to pickup!")
+		player.playsound("Alarms/ND_Mushroom.wav")
 		def TruffleQuantity = player.findCountOf("truffle")
 		log.info("Truffles found: ${TruffleQuantity}")
 		movetoTruffle()
@@ -296,21 +297,40 @@ def PutRopeInv(){
 		ClickOnPig()
 	}
 }
-
+def getnearestpig(){
+	gobs = player.findObjects("pig")
+	if (!gobs.isEmpty()) {
+		def nearlist = []
+		for (d = 0; d < gobs.size(); d++) {
+			dist = player.distanceTo(gobs[d])
+			nearlist.add(dist)
+		}
+		min = Collections.min(nearlist)
+		numberinlist = nearlist.indexOf(min)
+		return gobs[numberinlist]
+	}
+	return null
+}
 def SafeDistToPig(){
 	def playercoord
 	def pig
 	def distance
-	pig = player.isGob("pig")
+	pig = getnearestpig()
 	distance = player.distanceTo(pig)
+	log.info("${distance}")
 	if (distance > 99){
+		pig = getnearestpig()
+		distance = player.distanceTo(pig)
+		log.info("${distance}")
 		playercoord = player.getPlayerCoords()
 		def next = playercoord.add(0.0, 0.0)
 		def newpos = next
 		findTruffle()
 		player.moveToNoPF(newpos)
 		while (distance > 99){
+			pig = getnearestpig()
 			distance = player.distanceTo(pig)
+			log.info("${distance}")
 			findTruffle()
 			sleep(25)
 			if (distance < 88) break
@@ -456,6 +476,7 @@ def GoInHouseAndPut() {
 
 def start(){
 	GoOutHouse()
+	sleep(500)
 	def coords = [[0,-100],[0,-19],[-50,0],[0,119],[50,0]]
 	def coords1 = [[-17,0]]
 	def closegateCoords = [[0.0, -8.0]]

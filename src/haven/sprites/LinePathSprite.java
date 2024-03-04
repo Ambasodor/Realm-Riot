@@ -4,7 +4,13 @@ import haven.*;
 import haven.Composite;
 import haven.render.Pipe;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class LinePathSprite extends Sprite implements PView.Render2D {

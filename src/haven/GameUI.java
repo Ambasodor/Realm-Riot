@@ -34,11 +34,16 @@ import haven.botengine.GroovyScriptList;
 import haven.res.ui.stackinv.ItemStack;
 import haven.resutil.Ridges;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -49,6 +54,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static haven.Audio.volume;
 import static haven.IMeter.characterSoftHealthPercent;
 import static haven.Inventory.invsq;
 
@@ -2623,7 +2629,20 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		return true;
 	}
-
+	public void playsound(String Path){
+		File file = new File(Path);
+		try {
+			AudioInputStream in = AudioSystem.getAudioInputStream(file);
+			AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+			AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+			Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+			((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi,volume/2));
+		} catch(UnsupportedAudioFileException e) {
+			e.printStackTrace();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
 	public static Integer getPingValue() {
 		String osName = System.getProperty("os.name");
 		boolean isWindows = osName.startsWith("Windows");
