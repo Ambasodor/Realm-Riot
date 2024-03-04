@@ -39,6 +39,7 @@ import java.util.*;
 import java.util.List;
 
 import static haven.Utils.uint32;
+import static haven.automated.AUtils.GetGobByID;
 import static haven.automated.AUtils.attackGobId;
 
 public class Fightview extends Widget {
@@ -415,12 +416,14 @@ public class Fightview extends Widget {
 					rel.autopeaced = true;
 				}
 			}
-			if (unaggro && !rel.autopeaced && curdisp.give.state != 1){
+			if (unaggro && !rel.autopeaced){
 				synchronized (ui.sess.glob) {
 					Gob curgob = ui.sess.glob.oc.getgob(rel.gobid);
 					if (curgob != null && !curgob.getres().name.contains("gfx/borka")) {
-						wdgmsg("give", (int)rel.gobid, 1);
-						rel.autopeaced = true;
+						if (curdisp.give.state != 1) {
+							wdgmsg("give", (int) rel.gobid, 1);
+						}
+							rel.autopeaced = true;
 					}
 				}
 			}
@@ -450,6 +453,23 @@ public class Fightview extends Widget {
 	    return(null);
 	return(ui.sess.getres(num));
     }
+
+	public void ReAggro(GameUI gui, Long gobid, Relation rel){
+		Gob gob = GetGobByID(gui, gobid);
+		if (gob != null) {
+			if (gui != null && gui.map != null) {
+				if (!gob.getPoses().contains("knock") || !gob.getPoses().contains("dead") || !gob.getPoses().contains("waterdead")) {
+					attackGobId(gui, gobid);
+				}
+				if (gob.getPoses().contains("knock") || gob.getPoses().contains("dead") || gob.getPoses().contains("waterdead")){
+					gobid = -1L;
+					unaggro = false;
+					rel.autopeaced = false;
+					ui.gui.optionInfoMsg("ReAggro turned off! Target are dead!", Color.red);
+				}
+			}
+		}
+	}
     public void uimsg(String msg, Object... args) {
         if(msg == "new") {
             Relation rel = new Relation(uint32((Integer)args[0]));
@@ -471,12 +491,7 @@ public class Fightview extends Widget {
 				if(rel == current)
 					setcur(null);
 				updrel();
-				if(!attackGobId(this.ui.gui, this.autogivegobid)){
-					this.autogivegobid = -1L;
-					unaggro = false;
-					rel.autopeaced = false;
-					ui.gui.optionInfoMsg("ReAggro turned off!", Color.red);
-				}
+				ReAggro(this.ui.gui, this.autogivegobid, rel);
 			}
 	    rel.remove();
 		rel.destroy();

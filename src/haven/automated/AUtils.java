@@ -37,17 +37,15 @@ public class AUtils {
         }
         return null;
     }
-    public static boolean attackGobId(GameUI gui, Long gobid) {
+    public static void attackGobId(GameUI gui, Long gobid) {
         Gob gob = GetGobByID(gui,gobid);
         if (gob != null && gui != null && gui.map != null) {
             if (!gob.getPoses().contains("knock") || !gob.getPoses().contains("dead") || !gob.getPoses().contains("waterdead")) {
-                    gui.act("aggro");
-                    gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 1, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
-                    rightClick(gui);
-                    return true;
+                gui.act("aggro");
+                gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 1, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
+                rightClick(gui);
             }
         }
-        return false;
     }
     public static void rightClick(GameUI gui) {
         gui.map.wdgmsg("click", Coord.z, gui.map.player().rc.floor(posres), 3, 0);
