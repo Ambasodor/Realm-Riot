@@ -64,8 +64,8 @@ public class Fightview extends Widget {
     public double lastuse = 0;
     public Mainrel curdisp;
     public List<Relation> nonmain = Collections.emptyList();
-	private long autogivegobid;
-	private boolean unaggro = false;
+	public long autogivegobid;
+	public boolean unaggro = false;
 
     public class Relation {
         public final long gobid;
@@ -416,14 +416,14 @@ public class Fightview extends Widget {
 					rel.autopeaced = true;
 				}
 			}
-			if (unaggro && !rel.autopeaced){
+			if (unaggro && !rel.autopeaced || unaggro && curdisp.give.state != 1){
 				synchronized (ui.sess.glob) {
 					Gob curgob = ui.sess.glob.oc.getgob(rel.gobid);
 					if (curgob != null && !curgob.getres().name.contains("gfx/borka")) {
-						if (curdisp.give.state != 1) {
+						if (!rel.autopeaced && curdisp.give.state != 1) {
 							wdgmsg("give", (int) rel.gobid, 1);
-						}
 							rel.autopeaced = true;
+						}
 					}
 				}
 			}
@@ -454,18 +454,12 @@ public class Fightview extends Widget {
 	return(ui.sess.getres(num));
     }
 
-	public void ReAggro(GameUI gui, Long gobid, Relation rel){
+	public void ReAggro(GameUI gui, Long gobid) {
 		Gob gob = GetGobByID(gui, gobid);
 		if (gob != null) {
 			if (gui != null && gui.map != null) {
 				if (!gob.getPoses().contains("knock") || !gob.getPoses().contains("dead") || !gob.getPoses().contains("waterdead")) {
 					attackGobId(gui, gobid);
-				}
-				if (gob.getPoses().contains("knock") || gob.getPoses().contains("dead") || gob.getPoses().contains("waterdead")){
-					gobid = -1L;
-					unaggro = false;
-					rel.autopeaced = false;
-					ui.gui.optionInfoMsg("ReAggro turned off! Target are dead!", Color.red);
 				}
 			}
 		}
@@ -491,7 +485,7 @@ public class Fightview extends Widget {
 				if(rel == current)
 					setcur(null);
 				updrel();
-				ReAggro(this.ui.gui, this.autogivegobid, rel);
+				ReAggro(this.ui.gui, this.autogivegobid);
 			}
 	    rel.remove();
 		rel.destroy();
@@ -505,8 +499,10 @@ public class Fightview extends Widget {
         } else if(msg == "upd") {
 			Relation rel = getrel(uint32((Integer)args[0]));
 	    rel.give((Integer)args[1]);
-		if ((Integer)args[1] == 0){
-			rel.autopeaced = false;
+		if (unaggro){
+			if ((Integer)args[1] == 0){
+				rel.autopeaced = false;
+			}
 		}
 	    rel.ip = (Integer)args[2];
 	    rel.oip = (Integer)args[3];
