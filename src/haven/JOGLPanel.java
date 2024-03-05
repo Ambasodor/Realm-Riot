@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.io.File;
 import java.util.*;
 import java.awt.Toolkit;
 import java.awt.Robot;
@@ -45,6 +46,7 @@ import haven.render.States;
 import haven.render.gl.*;
 import haven.render.jogl.*;
 import com.jogamp.opengl.GL;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
     private static final boolean dumpbgl = true;
@@ -97,7 +99,6 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
 	caps.setBlueBits(8);
 	return(caps);
     }
-
     public JOGLPanel() {
 	super(mkcaps(), null, null);
 	paneljava = this;

