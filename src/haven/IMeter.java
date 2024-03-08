@@ -43,9 +43,7 @@ public class IMeter extends LayerMeter {
 	private Tex tipTex;
 	private boolean ponyAlarmPlayed = false;
 	private boolean energyAlarmTriggered = false;
-	public static boolean spar = false;
 	private boolean dangerEnergyAlarmTriggered = false;
-	public static int sparshp;
 
     @RName("im")
     public static class $_ implements Factory {
@@ -243,29 +241,14 @@ public void draw(GOut g) {
 				if (value.contains("/")) { // ND: this part removes the HHP, so I only show the SHP and MHP
 					String[] hps = value.split("/");
 					String SHP = hps[0].trim();
-					if (Double.parseDouble(SHP) > 0 && hps.length == 3){
-						spar = false;
+					if (Double.parseDouble(SHP) > 0){
 						String MHP = hps[2].trim();
 						characterSoftHealthPercent = (Double.parseDouble(SHP)/((Double.parseDouble(MHP)/100)));
-					} else if (hps.length == 4) {
-						spar = true;
-						String SHPS = hps[0].trim();
-						String MHPS = hps[3].trim();
-						characterSoftHealthPercent = (Double.parseDouble(SHPS)/((Double.parseDouble(MHPS)/100)));
-						sparshp = 100;
 					} else {
-						spar = false;
 						characterSoftHealthPercent = 0;
 					}
-					if (hps.length == 3) {
-						spar = false;
-						value = hps[0] + " / " + hps[hps.length - 1]; // ND: hps[0] is SHP, hps[1] is SHP, hps[2] (or hps[hps.length - 1]) is MHP
-						characterCurrentHealth = value;
-					} else {
-						spar = true;
-						value = hps[0] + " / " + hps[3]; // ND: hps[0] is SHP, hps[1] is SHP, hps[2] (or hps[hps.length - 1]) is MHP
-						characterCurrentHealth = value;
-					}
+					value = hps[0] + " / " + hps[hps.length - 1]; // ND: hps[0] is SHP, hps[1] is SHP, hps[2] (or hps[hps.length - 1]) is MHP
+					characterCurrentHealth = value;
 				}
 				tipTex = Text.renderstroked2(value.trim(), Color.WHITE, Color.BLACK, tipF).tex();
 			}

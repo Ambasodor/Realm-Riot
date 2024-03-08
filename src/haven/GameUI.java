@@ -55,7 +55,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static haven.Audio.volume;
-import static haven.IMeter.characterSoftHealthPercent;
 import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory, UI.MessageWidget {
@@ -132,6 +131,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public OceanScoutBot OceanScoutBot;
 	public Thread oceanScoutBotThread;
 	public GroovyScriptList groovyScriptList;
+	public CleaveDamageCalc cleaveDamageCalc;
+	public Thread cleaveDamageThread;
 	public WhaleBot OrcaFinder;
 	public Thread OrcaFinderThread;
 	public TunnelerBot tunnelerBot;
@@ -1234,7 +1235,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public void drawHealthMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
 		int w = msz.x;
 		int w1 = (int) Math.ceil(w * m.a);
-		int w2 = (int) Math.ceil(w * (characterSoftHealthPercent/100));
+		int w2 = (int) Math.ceil(w * (IMeter.characterSoftHealthPercent/100));
 		g.chcolor(yellow);
 		g.frect(sc, new Coord(w1, msz.y));
 		g.chcolor(red);

@@ -30,6 +30,7 @@ import haven.automated.DropItemsFromKnockedEnemy;
 import haven.automated.YoinkGoodStuffFromKnockedEnemy;
 import haven.res.ui.tt.armor.Armor;
 import haven.res.ui.tt.wear.Wear;
+import haven.res.ui.tt.wpn.Damage;
 
 import java.awt.*;
 import java.util.*;
@@ -236,7 +237,7 @@ public class Equipory extends Widget implements DTarget {
     public static interface SlotInfo {
 	public int slots();
     }
-
+	public GItem lweap, rweap;
     public void addchild(Widget child, Object... args) {
 		if(child instanceof GItem) {
 			add(child);
@@ -245,6 +246,14 @@ public class Equipory extends Widget implements DTarget {
 			for (int i = 0; i < args.length; i++) {
 				int ep = (Integer) args[i];
 				v[i] = slots[ep] = add(new WItem(g), ecoords[ep].add(1, 1));
+				switch (ep) {
+					case 6:
+						lweap = g;
+						break;
+					case 7:
+						rweap = g;
+						break;
+				}
 			}
 			g.sendttupdate = true;
 			wmap.put(g, v);
@@ -282,6 +291,11 @@ public class Equipory extends Widget implements DTarget {
 				if (slots[s] == v)
 					slots[s] = null;
 			}
+		}
+		if (lweap == i) {
+			lweap = null;
+		} else if (rweap == i) {
+			rweap = null;
 		}
 		bonuses.update(slots);
 		updateBottomText = true;

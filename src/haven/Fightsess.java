@@ -39,8 +39,6 @@ import java.util.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-import static haven.IMeter.characterSoftHealthPercent;
-import static haven.IMeter.sparshp;
 
 public class Fightsess extends Widget {
 	public static final Text.Foundry keybindsFoundry = new Text.Foundry(Text.sans.deriveFont(java.awt.Font.BOLD), 14);
@@ -55,6 +53,8 @@ public class Fightsess extends Widget {
     public static final Tex useframe = Resource.loadtex("gfx/hud/combat/lastframe");
     public static final Coord useframeo = (useframe.sz().sub(off)).div(2);
     public static final int actpitch = UI.scale(52);
+	public static int blueopp = -1;
+	public static int redopp = -1;
 	public static final Text.Foundry ipAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 14);
 	public static final Text.Foundry openingAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
 	public static final Text.Foundry cleaveAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
@@ -649,6 +649,12 @@ public class Fightsess extends Widget {
 				for (Buff buff : enemyOpenings) {
 					try {
 					String name = buff.res.get().name;
+					if (name.contains("dizzy")){
+						blueopp = getOpeningValue(buff);
+					}
+					if (name.contains("cornered")){
+						redopp = getOpeningValue(buff);
+					}
 					int meterValue = getOpeningValue(buff);
 					Tex img = buff.res.get().flayer(Resource.imgc).tex();
 					Coord isz = img.sz();
@@ -827,7 +833,6 @@ public class Fightsess extends Widget {
 		} catch(Exception ignored) {
 		}
 		g.aimage(Text.renderstroked(fmt2DecPlaces(fv.lastMoveCooldownSeconds)).tex(), cdc2, 0.5, 0.5);
-
 		if (fv.current != null) {
 			g.aimage(Text.renderstroked("Est. Agi: ").tex(), cdc3, 1, 0.5);
 			if (fv.current.minAgi != 0 && fv.current.maxAgi != 2D) {
@@ -902,15 +907,10 @@ public class Fightsess extends Widget {
 				drawStamMeterBar(g, stam, sc, msz);
 			}
 			IMeter.Meter hp = ui.gui.getmeter("hp", 0);
-			if (hp != null && !IMeter.spar) {
+			if (hp != null) {
 				Coord msz = UI.scale(new Coord(150, 20));
 				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(44));
 				drawHealthMeterBar(g, hp, sc, msz);
-			}
-			if (IMeter.spar){
-				Coord msz = UI.scale(new Coord(150, 20));
-				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(44));
-				drawHealthMeterBarSpar(g, (double) sparshp, sc, msz);
 			}
 		}
 	}
@@ -919,7 +919,7 @@ public class Fightsess extends Widget {
 	public void drawHealthMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
 		int w = msz.x;
 		int w1 = (int) Math.ceil(w * m.a);
-		int w2 = (int) Math.ceil(w * (characterSoftHealthPercent/100));
+		int w2 = (int) Math.ceil(w * (IMeter.characterSoftHealthPercent/100));
 		g.chcolor(yellow);
 		g.frect(sc, new Coord(w1, msz.y));
 		g.chcolor(red);
@@ -930,21 +930,6 @@ public class Fightsess extends Widget {
 
 		g.chcolor(Color.WHITE);
 		g.aimage(Text.renderstroked((IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)(m.a*100)))+"% HHP)"), Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
-	}
-	public void drawHealthMeterBarSpar(GOut g, Double m, Coord sc, Coord msz) {
-		int w = msz.x;
-		int w1 = (int) Math.ceil(w * (sparshp/100));
-		int w2 = (int) Math.ceil(w * (characterSoftHealthPercent/100));
-		g.chcolor(red);
-		g.frect(sc, new Coord(w1, msz.y));
-		g.chcolor(Color.green);
-		g.frect(sc, new Coord(w2, msz.y));
-		g.chcolor(barframe);
-		g.line(new Coord(sc.x+w1, sc.y), new Coord(sc.x+w1, sc.y+msz.y), 1);
-		g.rect(sc, new Coord(msz.x, msz.y));
-
-		g.chcolor(Color.WHITE);
-		g.aimage(Text.renderstroked((IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)characterSoftHealthPercent))+"% SHP)"), Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
 	}
 	private void drawCombatData(GOut g, Fightview.Relation rels, Coord sc) {
 		int scaledY = sc.y - UI.scale(90);
@@ -1182,10 +1167,10 @@ public class Fightsess extends Widget {
     public static final String[] keytips = {"1", "2", "3", "4", "5", "Shift+1", "Shift+2", "Shift+3", "Shift+4", "Shift+5"};
 	public Object tooltip(Coord c, Widget prev) {
 		GameUI gui = ui.gui;
-		double x1 = this.sz.x / 2.0;
-		double y1 = this.sz.y - ((this.sz.y / 500.0) * OptWnd.combatUITopPanelHeightSlider.val);
-		int x0 = (int)x1;
-		int y0 = (int)y1;
+		double x1 = gui.sz.x / 2.0;
+		double y1 = gui.sz.y - ((gui.sz.y / 500.0) * OptWnd.combatUITopPanelHeightSlider.val);
+		int x0 = (int)x1; // I have to do it like this, otherwise it's not consistent when resizing the window
+		int y0 = (int)y1; // I have to do it like this, otherwise it's not consistent when resizing the window
 
 		double bottom1 = gui.sz.y - ((gui.sz.y / 500.0) * OptWnd.combatUIBottomPanelHeightSlider.val);
 		int bottom = (int)bottom1;// I have to do it like this, otherwise it's not consistent when resizing the window

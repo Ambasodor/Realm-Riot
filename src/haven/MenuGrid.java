@@ -366,6 +366,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_bronzeshield");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_fyrdsmanshield");
 
+		makeLocal("paginae/nightdawg/Bots/CleaveDamageCalc");
 		makeLocal("paginae/nightdawg/Bots/OrcaFinder");
 		makeLocal("paginae/nightdawg/Bots/OceanScoutBot");
 		makeLocal("paginae/nightdawg/Bots/AutoTunneler");
@@ -676,6 +677,20 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				} else {
 					ui.gui.groovyScriptList.addConds(allscr);
 					ui.gui.groovyScriptList.show();
+				}
+			} else if (ad[2].equals("CleaveDamageCalc")) {
+				if (gui.cleaveDamageCalc == null && gui.cleaveDamageThread == null) {
+					gui.cleaveDamageCalc = new CleaveDamageCalc(ui);
+					gui.add(gui.cleaveDamageCalc, new Coord(gui.sz.x/2 - gui.cleaveDamageCalc.sz.x/2, gui.sz.y/2 - gui.cleaveDamageCalc.sz.y/2 - 200));
+					gui.cleaveDamageThread = new Thread(gui.cleaveDamageCalc, "CleaveDamageCalc");
+					gui.cleaveDamageThread.start();
+				} else {
+					if (gui.cleaveDamageCalc != null) {
+						gui.cleaveDamageCalc.stop();
+						gui.cleaveDamageCalc.reqdestroy();
+						gui.cleaveDamageCalc = null;
+						gui.cleaveDamageThread = null;
+					}
 				}
 			} else if (ad[2].equals("AutoTunneler")) {
 				if (gui.tunnelerBot == null && gui.tunnelerBotThread == null) {
