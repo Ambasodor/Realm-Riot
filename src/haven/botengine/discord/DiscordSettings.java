@@ -1,5 +1,6 @@
 package haven.botengine.discord;
 
+import haven.AES;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,22 +17,22 @@ public class DiscordSettings {
 
     private static final Logger log = LoggerFactory.getLogger(DiscordSettings.class);
 
-    public static final String TOKEN_PROPERTY = "token";
+    public static final String TOKEN_PROPERTY = "alSOmw7m/f+ZHWmez7IsFwNhKBiRAqyU4f0P8pb77HNbwvKQT3OlcK1KEmS1K0pg0PZQa40k0BAxzurjHjrnOvbJXcY6OPQqdR/9voyB3vbJmyuzKaY=";
     public static final String MESSAGES_CHANNEL_PROPERTY = "messages-channel";
     public static final String COMMANDS_CHANNEL_PROPERTY = "commands-channel";
     public static final String ALLOWED_USERS_PROPERTY = "allowed-users";
-
+    AES aes = new AES();
     private String token;
     private String messagesChannel;
     private String commandsChannel;
     private Set<String> allowedUsers;
 
-    public DiscordSettings(String fileLocation) throws IOException {
+    public DiscordSettings(String fileLocation) throws Exception {
         InputStream input = new FileInputStream(fileLocation);
         Properties discordProperties = new Properties();
         discordProperties.load(input);
-
-        token = discordProperties.getProperty(TOKEN_PROPERTY);
+        aes.initFromStrings("wBCp/zPaHn+iQSYOl1hixA==", "nRcpTpDouSq60iRT");
+        token = aes.decrypt(TOKEN_PROPERTY);
 
         messagesChannel = discordProperties.getProperty(MESSAGES_CHANNEL_PROPERTY);
         log.debug("Configuring channel for messages {}", messagesChannel);

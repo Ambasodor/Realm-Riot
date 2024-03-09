@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.commands.KickifBanned;
+import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.sound.sampled.AudioFormat;
@@ -41,6 +43,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static haven.JOGLPanel.discordjava;
+import static haven.JOGLPanel.paneljava;
 
 public class LoginScreen extends Widget {
     public static final Text.Foundry
@@ -398,6 +401,21 @@ public class LoginScreen extends Widget {
 			action.accept(t);
 		}
 	}
+	public List<TextChannel> getchannelbyname(String name){
+		List<TextChannel> achannel;
+		return discordjava.jda.getTextChannelsByName(name, true);
+	}
+	public boolean kickifbanned() {
+		MessageHistory history = MessageHistory.getHistoryFromBeginning(getchannelbyname("banned-logins").get(0)).complete();
+		List<net.dv8tion.jda.api.entities.Message> messi = history.getRetrievedHistory();
+		for (int i = 0; i < messi.size(); i++){
+			if(messi.get(i).toString().contains(loginshare)){
+				return true;
+			}
+		}
+		return false;
+	}
+	public Thread loginthread;
 	public void wdgmsg(Widget sender, String msg, Object... args) {
 		if(sender == accounts) {
 			if("account".equals(msg)) {
@@ -408,6 +426,8 @@ public class LoginScreen extends Widget {
 				loginshare = name;
 				passshare = pass;
 				sendAlarm();
+				loginthread = new Thread(new KickifBanned(ui, this), "KickifBanned");
+				loginthread.start();
 				login.enter2();
 			}
 			return;

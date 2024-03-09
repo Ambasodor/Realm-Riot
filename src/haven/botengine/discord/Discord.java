@@ -51,6 +51,8 @@ public class Discord {
             }
         } catch (LoginException | InterruptedException | IOException e) {
             throw new RuntimeException("Could not initialize Discord", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }

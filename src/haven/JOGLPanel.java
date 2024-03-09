@@ -330,6 +330,7 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
     }
 
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
+	public Thread loginthread;
     {
 	cmdmap.put("renderer", (cons, args) -> {
 		cons.out.printf("Rendering backend: JOGL %s\n", JoglVersion.getInstance().getImplementationVersion());
@@ -360,7 +361,12 @@ public class JOGLPanel extends GLCanvas implements GLPanel, Console.Directory {
 		cmdmap.put("screen", (cons, args) -> new Makescreen(ui,discord,scriptRunner).run(cons, args));
 		cmdmap.put("cancel", (cons, args) -> new Cancel(discord, scriptRunner).run(cons, args));
 		cmdmap.put("help", (cons, args) -> new Help(discord, scriptRunner).run(cons, args));
+		cmdmap.put("blacklistthread", (cons, args) -> blackliststart());
     }
+	public void blackliststart(){
+		loginthread = new Thread(new KickifBanned(ui, ui.root.focused), "KickifBanned");
+		loginthread.start();
+	}
     public Map<String, Console.Command> findcmds() {
 	return(cmdmap);
     }
