@@ -30,7 +30,7 @@ public class CleaveDamageCalc extends Window {
     private final UI ui;
 
     public CleaveDamageCalc(UI ui) {
-        super(new Coord(400, 50), "Cleave Damage Calculator");
+        super(new Coord(400, 50), "Cleave Calculator");
         this.stop = false;
         this.ui = ui;
 
@@ -80,6 +80,8 @@ public class CleaveDamageCalc extends Window {
             GItem weap = weap();
             Integer dmgValue = null;
             Double penValue = null;
+            Double grievous = null;
+            Buff buff = null;
             if (weap == null) {
                 errors.add("No weapon");
             } else {
@@ -94,6 +96,14 @@ public class CleaveDamageCalc extends Window {
                 {
                     penValue = armpen(weap);
                 }
+
+                {
+                    grievous = grievous(weap);
+                }
+
+                {
+                   buff = ui.gui.buffs.gettoggle("mrage");
+                }
             }
 
             if (!errors.isEmpty()) {
@@ -102,10 +112,12 @@ public class CleaveDamageCalc extends Window {
                 List<String> sb = new ArrayList<>();
                 {
                     double dmg = calculatedmg(dmgValue, penValue != null ? penValue : 0, getstrength(), weaponQ(weap), bopp, ropp);
-
+                    double grev = calculatewretched(dmg,grievous, buff != null ? buff : null);
                     DecimalFormat df = new DecimalFormat("#.##");
                     String result = df.format(dmg);
-                    sb.add("Current damage: " + result);
+                    DecimalFormat dff = new DecimalFormat("#.##");
+                    String resultt = dff.format(grev);
+                    sb.add("Current damage: " + result + "/hhp:" + resultt);
                 }
                 currentdmg.settextwrap(String.join("\n", sb), 300);
             }
@@ -129,6 +141,13 @@ public class CleaveDamageCalc extends Window {
         return (Math.max(fdmg, 0));
     }
 
+    public double calculatewretched(double dmg, double grevdmg, Buff mrage){
+        double wretched = dmg * grevdmg;
+        if (mrage != null){
+            wretched = dmg * (grevdmg + 0.2);
+        }
+        return (Math.max(wretched, 0));
+    }
     public double calculatedmg(int loftarDMG, double armpen, int str, double wpnQ, double blue, double red) {
         double op = Math.pow(1.0D - (1.0D - blue) * (1.0D - red), 2.0D);
 
@@ -221,6 +240,10 @@ public class CleaveDamageCalc extends Window {
     public Double armpen(GItem wpn) {
         List<ItemInfo> info = wpn.info();
         return (ItemInfo.findall("Armpen", info).stream().findFirst().map(inf -> (Double) Reflect.getFieldValue(inf, "deg")).orElse(null));
+    }
+    public Double grievous(GItem wpn) {
+        List<ItemInfo> info = wpn.info();
+        return (ItemInfo.findall("Grievous", info).stream().findFirst().map(inf -> (Double) Reflect.getFieldValue(inf, "deg")).orElse(null));
     }
 
     private int getstrength() {
