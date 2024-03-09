@@ -102,7 +102,7 @@ public class CleaveDamageCalc extends Window {
                 }
 
                 {
-                   buff = ui.gui.buffs.gettoggle("mrage");
+                   buff = getbuff("mrage");
                 }
             }
 
@@ -279,7 +279,9 @@ public class CleaveDamageCalc extends Window {
     public double getOppenings(Fightview.Relation rel, String regName) {
         return (rel.buffs.getchilds(Buff.class).stream().filter(b -> b.res.get().name.matches(".*" + regName + ".*")).findFirst().map(buff -> (buff.ameter >= 0) ? Double.valueOf(buff.ameter / 100.0) : buff.getAmeteri().get()).orElse((double) 0));
     }
-
+    public Buff getbuff(String name){
+        return ui.gui.buffs.gettoggle(name);
+    }
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
         if ((sender == this) && (Objects.equals(msg, "close"))) {

