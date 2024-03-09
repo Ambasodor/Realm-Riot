@@ -39,6 +39,8 @@ import java.util.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
+import static haven.IMeter.characterSoftHealthPercent;
+import static haven.IMeter.sparshp;
 
 public class Fightsess extends Widget {
 	public static final Text.Foundry keybindsFoundry = new Text.Foundry(Text.sans.deriveFont(java.awt.Font.BOLD), 14);
@@ -55,6 +57,7 @@ public class Fightsess extends Widget {
     public static final int actpitch = UI.scale(52);
 	public static int blueopp = -1;
 	public static int redopp = -1;
+
 	public static final Text.Foundry ipAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 14);
 	public static final Text.Foundry openingAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
 	public static final Text.Foundry cleaveAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
@@ -907,10 +910,15 @@ public class Fightsess extends Widget {
 				drawStamMeterBar(g, stam, sc, msz);
 			}
 			IMeter.Meter hp = ui.gui.getmeter("hp", 0);
-			if (hp != null) {
+			if (hp != null && !IMeter.spar) {
 				Coord msz = UI.scale(new Coord(150, 20));
 				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(44));
 				drawHealthMeterBar(g, hp, sc, msz);
+			}
+			if (IMeter.spar){
+				Coord msz = UI.scale(new Coord(150, 20));
+				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(44));
+				drawHealthMeterBarSpar(g, (double) sparshp, sc, msz);
 			}
 		}
 	}
@@ -930,6 +938,21 @@ public class Fightsess extends Widget {
 
 		g.chcolor(Color.WHITE);
 		g.aimage(Text.renderstroked((IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)(m.a*100)))+"% HHP)"), Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
+	}
+	public void drawHealthMeterBarSpar(GOut g, Double m, Coord sc, Coord msz) {
+		int w = msz.x;
+		int w1 = (int) Math.ceil(w * (sparshp/100));
+		int w2 = (int) Math.ceil(w * (characterSoftHealthPercent/100));
+		g.chcolor(red);
+		g.frect(sc, new Coord(w1, msz.y));
+		g.chcolor(Color.green);
+		g.frect(sc, new Coord(w2, msz.y));
+		g.chcolor(barframe);
+		g.line(new Coord(sc.x+w1, sc.y), new Coord(sc.x+w1, sc.y+msz.y), 1);
+		g.rect(sc, new Coord(msz.x, msz.y));
+
+		g.chcolor(Color.WHITE);
+		g.aimage(Text.renderstroked((IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)characterSoftHealthPercent))+"% SHP)"), Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
 	}
 	private void drawCombatData(GOut g, Fightview.Relation rels, Coord sc) {
 		int scaledY = sc.y - UI.scale(90);
