@@ -185,7 +185,7 @@ public class CleaveDamageCalc extends Window {
                 }
             }
         }
-        return false;
+        return (false);
     }
 
     public GItem getbronzesword() {
