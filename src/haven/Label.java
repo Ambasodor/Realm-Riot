@@ -80,6 +80,12 @@ public class Label extends Widget {
 	this.text = Text.create(texts, PUtils.strokeImg(f.render(texts = text, col)));
 	sz = this.text.sz();
     }
+
+	public void settextwrap(String text, int w) {
+		this.text.dispose();
+		this.text = Text.create(texts, PUtils.strokeImg(f.renderwrap(texts = text, col, w)));
+		sz = this.text.sz();
+	}
 	
     public void setcolor(Color color) {
 	col = color;

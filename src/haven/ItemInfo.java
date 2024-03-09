@@ -27,6 +27,7 @@
 package haven;
 
 import haven.res.ui.tt.attrmod.AttrMod;
+import haven.res.ui.tt.wpn.Damage;
 
 import java.awt.*;
 import java.util.*;

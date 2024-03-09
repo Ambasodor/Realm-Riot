@@ -11,8 +11,11 @@ public abstract class GobInfo extends GAttrib implements RenderTree.Node, PView.
     protected Tex tex;
     public Coord3f pos = new Coord3f(0, 0, 1);
     protected final Object texLock = new Object();
+    protected final Object hexLock = new Object();
     protected Pair<Double, Double> center = new Pair<>(0.5, 1.0);
     protected boolean dirty = true;
+    protected boolean dirtyhex = true;
+    protected Tex hextex;
     public GobInfo(Gob owner) {
         super(owner);
     }
@@ -26,7 +29,7 @@ public abstract class GobInfo extends GAttrib implements RenderTree.Node, PView.
     @Override
     public void ctick(double dt) {
         synchronized (texLock) {
-            if(enabled() && dirty && tex == null) {
+            if(dirty && tex == null) {
                 tex = render();
                 dirty = false;
             }
@@ -35,16 +38,14 @@ public abstract class GobInfo extends GAttrib implements RenderTree.Node, PView.
 
     @Override
     public void draw(GOut g, Pipe state) {
-        if (GameUI.showUI){
-            synchronized (texLock) {
-                if(enabled() && tex != null) {
-                    Coord3f c3d = Homo3D.obj2view2(pos, state, Area.sized(g.sz()));
-                    if(c3d == null) {return;}
-                    Coord sc = c3d.round2();
-                    sc.y = sc.y + UI.scale(17);
-                    if(sc.isect(Coord.z, g.sz())) {
-                        g.aimage(tex, sc, center.a, center.b);
-                    }
+        if (GameUI.showUI) {
+            if(tex != null && enabled()) {
+                Coord3f c3d = Homo3D.obj2view2(pos, state, Area.sized(g.sz()));
+                if(c3d == null) {return;}
+                Coord sc = c3d.round2();
+                sc.y = sc.y + UI.scale(17);
+                if(sc.isect(Coord.z, g.sz())) {
+                    g.aimage(tex, sc, center.a, center.b);
                 }
             }
         }

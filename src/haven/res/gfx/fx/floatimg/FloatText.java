@@ -8,7 +8,7 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import static haven.PUtils.*;
 
-@haven.FromResource(name = "gfx/fx/floatimg", version = 4)
+@haven.FromResource(name = "gfx/fx/floatimg", version = 5)
 public class FloatText extends FloatSprite {
     public static final Text.Foundry fnd = new Text.Foundry(Text.sans, 12);
 

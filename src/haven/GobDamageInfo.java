@@ -49,7 +49,7 @@ public class GobDamageInfo extends GobInfo {
         if (gui != null && gui.fv != null && gui.fv.current != null) {
             return OptWnd.toggleGobDamageInfoCheckBox.a;
         } else {
-            clearAllDamage(gui);
+            clearAllDamage(gui); // fix m
         }
         return false;
     }

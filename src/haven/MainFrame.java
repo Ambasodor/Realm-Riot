@@ -480,7 +480,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 	String ed = Utils.getprop("haven.errorurl", "");
 	if(ed.equals("stderr")) {
 	    g = new haven.error.SimpleHandler("Haven main group", true);
-	} else if(!ed.equals("")) {
+	} else if(!ed.isEmpty()) {
 	    try {
 		final haven.error.ErrorHandler hg = new haven.error.ErrorHandler(new java.net.URI(ed).toURL());
 		hg.sethandler(new haven.error.ErrorGui(null) {

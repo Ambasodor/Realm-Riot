@@ -45,7 +45,7 @@ public class LinePathSprite extends Sprite implements PView.Render2D {
                         if (lm != null) {
                             Coord2d mc = mv.pllastcc;
                             if (mc != null) {
-                                if (gob.isMe()) {
+                                if (gob == ui.gui.map.player()) {
                                     final Coord3f pc = gob.getc();
                                     Coord pla = pc.round2();
                                     double x = mc.x - pc.x;

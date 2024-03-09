@@ -8,7 +8,7 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import static haven.PUtils.*;
 
-@haven.FromResource(name = "gfx/fx/floatimg", version = 4)
+@haven.FromResource(name = "gfx/fx/floatimg", version = 5)
 public class FloatSprite extends Sprite implements PView.Render2D {
     public final double tm;
     final Tex tex;

@@ -132,7 +132,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread oceanScoutBotThread;
 	public GroovyScriptList groovyScriptList;
 	public CleaveDamageCalc cleaveDamageCalc;
-	public Thread cleaveDamageThread;
 	public WhaleBot OrcaFinder;
 	public Thread OrcaFinderThread;
 	public TunnelerBot tunnelerBot;
