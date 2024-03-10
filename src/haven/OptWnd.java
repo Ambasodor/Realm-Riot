@@ -341,7 +341,7 @@ public class OptWnd extends Window {
 		    grp.check(prefs.syncmode.val.ordinal());
 		    done[0] = true;
 		}
-			{
+			/*{
 				prev = add(new CheckBox("Experimental Render (Require Restart)") {
 					{a = (Utils.getprefb("enableExperimentalRender", false));}
 					public void set(boolean val) {
@@ -350,6 +350,8 @@ public class OptWnd extends Window {
 					}
 				}, prev.pos("bl").adds(0, 5));
 			}
+
+			 */
 		/* XXXRENDER
 		composer.add(new CheckBox("Antialiasing") {
 			{a = cf.fsaa.val;}
